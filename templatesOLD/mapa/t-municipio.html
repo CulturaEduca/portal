@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+</head>
+<script src="/static/js/ol/OpenLayers.js"></script>
+<script src="/static/js/mapa3.js"></script>
+<body onload="init();">
+<h1>Territórios Educativos em {{ municipio.nome|title }}</h1>
+<a href="{% url 'mapa_index' %}">Mapas</a> / <a href="{% url 'mapa_uf' uf %}">{{ uf }}</a> / {{ municipio.nome|title }}
+<br><br>
+<span style="visibility:hidden;display:none" id='longitude_centro'>{{ longitude_centro }}</span>
+<span style="visibility:hidden;display:none" id='latitude_centro'>{{ latitude_centro }}</span>
+<span style="visibility:hidden;display:none" id='codigo_ibge'>{{ codigo_ibge }}</span>
+
+
+<div id='mapa' style='width:800px; height:800px;'></div>
+
+
+
+</body>
+</html>
+
+

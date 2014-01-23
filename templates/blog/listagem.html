@@ -1,0 +1,106 @@
+{% extends 'bootstrap.html' %}
+{% block title %}Blog do Cultura Educa{% endblock %}
+{% block conteudo %}
+{% load humanize %}
+<div class="row-fluid">
+    <div class="span6">
+        <section class="blog-list">
+          {% for post in posts %}
+          <section class="bevel tr">
+              <img class="pull-right trimg" src="/static/img/tri-verdew.png" alt="detalhe triangulo">
+            <article class="post-list">
+                <h4>{{ post.titulo }}</h4>
+                <h6>{{ post.data_publicacao }}</h6>
+                    <img src="/static/media/{{ post.imagem_destaque }}">
+
+                {% if post.resumo %}
+                <p>{{ post.resumo }}</p>
+                {% else %}
+                <p>{{ post.conteudo|truncatewords:20|safe }}</p>
+                {% endif %}
+
+                <span><a href="{% url 'post' post.slug %}">
+                    <button class="btn-verde">
+                        {{ post.comentarios }} comentário{{ post.comentarios|pluralize }}
+                    </button></a></span>
+
+                <span class="pull-right">
+                  <a href="{% url 'post' post.slug %}">
+                    Leia Mais...
+                  </a>
+                </span>
+            </article><!--post-list-->
+        </section><!--bevel tr-->
+            {% endfor %}
+        </section>
+
+        <!--Paginacao-->
+    {% if has_previous %}
+        <a href="/blog/{{ previous }}/">&lsaquo; Anterior</a>
+    {% else %}
+        <span>&lsaquo; Anterior</span>
+    {% endif %}
+
+    {% if has_next %}
+        <a  class="pull-right" href="/blog/{{ next }}/">Próxima &rsaquo;</a>
+    {% else %}
+        <span class="pull-right">Próxima &rsaquo;</span>
+    {% endif %}
+<!--Paginacao-->
+
+    </div><!--span6-->
+<!--Coluna divisor -->
+    <div class="span6">
+        <!--<div class="box-master bevel tr folded foldverde">
+          <div class="box-bloge">
+            <h5>SOBRE</h5>
+            <h6>OS AUTORES</h6>
+            <section class="blog-autores">
+                <img src="/static/img/icon-autor.png" alt="">
+                <p>Autor: Redação</p>
+            </section>
+          </div>
+        </div>-->
+        <div class="bevel tr">
+            <img class="pull-right trimg" src="/static/img/tri-verdew.png" alt="detalhe triangulo">
+          <div class="box-bloge box-posts">
+            <h4>BLOG</h4>
+            <h5>Posts mais lidos</h5>
+             <section>
+                        {% for ml in mais_lidos %}
+                        <article>
+                          <a href="{% url 'post' ml.slug %}">
+                            {% if lista.imagem_destaque %}
+                            <img class="pull-left" src="/static/media/{{ post.imagem_destaque }}" alt="thumbnail da imagem de destaque">
+                            {% else %}
+                            <img class="pull-left" src="/static/img/{% cycle 'thumbs1.jpg' 'thumbs2.jpg' 'thumbs3.jpg' %}" alt="thumbnail da imagem de destaque">
+                            {% endif %}
+                            <p>
+                            {% if ml.titulo %}
+                                {{ ml.titulo|striptags|truncatechars:45}}
+                            {% else %}
+                                SEM TíTULO
+                            {% endif %}
+                            </p>
+                            <p>
+                            {% if ml.resumo %}
+                                {{ ml.resumo|striptags|truncatechars:100 }}
+                            {% else %}
+                                {{ ml.conteudo|striptags|truncatechars:100}}
+                            {% endif %}
+                            </p>
+                          </a>
+                        </article>
+                        <hr>
+                        {% endfor %}
+                      </section>
+          </div>
+        </div><!--bevel tr-->
+        <div class="blog-tags">
+            {% for tag in tags %}
+                <p><a href="{% url 'blog' %}?tag={{ tag|slugify }}">{{ tag }}</a></p>
+            {% endfor %}
+        </div><!--blog-tags-->
+    </div><!--span6-->
+  </div><!--row-fluid-->
+{% endblock %}

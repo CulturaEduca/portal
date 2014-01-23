@@ -1,0 +1,201 @@
+{% extends 'bootstrap.html' %}
+{% block conteudo %}
+<div class="row-fluid">
+    <div class="span6">
+            <div class="bevel tr">
+              <img class="pull-right trimg" src="/static/img/tri-azulw.png" alt="detalhe triangulo">
+                <div class="box-sobre">
+                    <h5>{{ p.titulo }}</h5>
+                        <article class="sobre-texto">
+                            {{ p.conteudo|safe }}
+                        </article>
+                        <br>
+                </div>
+            </div>
+    </div>
+    <div class="span6">
+            <div>
+                <div class="box-video">
+                    <iframe class=video-iframe src="http://player.vimeo.com/video/52125131?portrait=0" frameborder="0" max-width="100%" height="auto" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+                </div>
+            </div>
+            <div class="bevel tr">
+              <img class="pull-right trimg" src="/static/img/tri-azulw.png" alt="detalhe triangulo">
+            <div class="box-faq">
+                <div class="accordion" id="accordion-faq">
+                <h2>PERGUNTAS FREQUENTES:</h2>
+                <span><hr><img src="/static/img/bandeira.png" alt="Enfeite decorativo"></span>
+                <div class="accordion-group">
+                  <div class="accordion-heading">
+                     <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion-faq" href="#accordion-element-936300">
+                      <h3>O QUE É MAPEAMENTO COLABORATIVO?</h3>
+                    </a>
+                  </div>
+                  <div id="accordion-element-936300" class="accordion-body collapse">
+                    <div class="accordion-inner">
+                      <p>
+                        É o processo de construção coletiva de um mapa: qualquer usuário pode inserir e/ou editar informações.
+                        No contexto da cartografia social, o processo de construção de mapas participativos pode ser usado pela
+                        comunidade como oportunidade para a reflexão sobre o território.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <span><hr><img src="/static/img/bandeira.png" alt="Enfeite decorativo"></span>
+                <div class="accordion-group">
+                  <div class="accordion-heading">
+                      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion-faq" href="#accordion-element-936301">
+                        <h3>QUAIS SÃO OS EQUIPAMENTOS, INSTITUIÇÕES E INICIATIVAS MAPEADOS NO PORTAL CULTURAEDUCA?</h3>
+                      </a>
+                  </div>
+                  <div id="accordion-element-936301" class="accordion-body collapse">
+                    <div class="accordion-inner">
+                      <p>
+                        O mapeamento colaborativo é permanente, portanto, a partir da abertura das funcionalidades interativas,
+                        o CulturaEduca estará constantemente recebendo novas informações inseridas por usuários cadastrados.
+                        As bases iniciais, coletadas junto a órgãos públicos são: 15 mil escolas públicas participantes do programa
+                        Mais Educação do MEC; Pontos de Cultura; Agentes de Leitura; Bibliotecas públicas e bibliotecas comunitárias
+                        rurais; Museus; Teatros; Cinemas; Centros de Referência de Assistência Social (CRAS) e Centros de Referência
+                        Especializado em Assistência Social (CREAS); Equipamentos de saúde; Centros e museus de ciências; Telecentros.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <span><hr><img src="/static/img/bandeira.png" alt="Enfeite decorativo"></span>
+                <div class="accordion-group">
+                  <div class="accordion-heading">
+                     <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion-faq" href="#accordion-element-936302">
+                      <h3>QUAIS BASES DE DADOS E INDICADORES SOCIAIS ESTÃO DISPONÍVEIS/SÃO UTILIZADAS?</h3>
+                    </a>
+                  </div>
+                  <div id="accordion-element-936302" class="accordion-body collapse">
+                    <div class="accordion-inner">
+                          <p>As bases de dados iniciais do CulturaEduca são:
+                          <br>
+                          <a href="http://censo2010.ibge.gov.br/">
+                            Censo Demográfico (IBGE/2010)
+                          </a><br>
+                          <a href="http://portal.inep.gov.br/basica-censo">
+                            Censo Escolar (INEP/2011)
+                          </a><br>
+                          <a href="http://www.ibge.gov.br/home/estatistica/economia/perfilmunic/2011/default.shtm">
+                            Perfil dos Municípios Brasileiros (IBGE/ 2009 e 2011)
+                          </a><br>
+                          <a href="http://www.ibge.gov.br/home/estatistica/populacao/trabalhoerendimento/pnad2011/">
+                            Pesquisa Nacional por Amostra de Domicílios (IBGE/2011)
+                          </a><br>
+                          <a href="http://portal.inep.gov.br/basica-censo">
+                            Índice de Desenvolvimento da Educação Básica (INEP/2011)
+                          </a><br>
+                          </p>
+                    </div>
+                  </div>
+                </div>
+                <span><hr><img src="/static/img/bandeira.png" alt="Enfeite decorativo"></span>
+                <div class="accordion-group">
+                  <div class="accordion-heading">
+                     <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion-faq" href="#accordion-element-936303">
+                      <h3>O QUE É UM TERRITÓRIO EDUCATIVO?</h3>
+                    </a>
+                  </div>
+                  <div id="accordion-element-936303" class="accordion-body collapse">
+                    <div class="accordion-inner">
+                          <p>Um marco do debate sobre "território educativo" entre estudiosos da Educação foi o I Congresso
+                            Internacional das Cidades Educadoras que ocorreu em Barcelona, Espanha, em 1990. Dele resultou a
+                            Carta das Cidades Educadoras, que explora o tema. Para uso do portal CulturaEduca, um território educativo é
+                            o espaço físico e simbólico do entorno de uma escola pública. A área deste entorno é variável - de 1a 5 km,
+                            dependendo da região - mas sempre considera uma extensão apreensível pelos cidadãos em sua vivência cotidiana.
+                            Dentro de cada área, busca-se identificar equipamentos e iniciativas socioculturais que contribuam para a educação
+                            permanente de crianças, jovens, adultos e idosos. Pode ser uma biblioteca, um sarau, uma galeria de arte, um galpão
+                            onde acontecem oficinas, uma roda de samba, um museu, um campo que vira feira ou uma praça ou uma rua, qualquer
+                            espaço/tempo relevante para a comunidade.
+                          </p>
+                    </div>
+                  </div>
+                </div>
+                <span><hr><img src="/static/img/bandeira.png" alt="Enfeite decorativo"></span>
+                <div class="accordion-group">
+                  <div class="accordion-heading">
+                     <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion-faq" href="#accordion-element-936304">
+                      <h3>QUEM PODE USAR O MAPA? PARA QUE?</h3>
+                    </a>
+                  </div>
+                  <div id="accordion-element-936304" class="accordion-body collapse">
+                    <div class="accordion-inner">
+                          <p>Qualquer pessoa pode usar o mapa, que pode servir para diferentes fins. Algumas possibilidades são:
+                          <br><br>
+                          - professores de diferentes disciplinas podem fazer do processo de construção dos mapas uma ferramenta
+                          pedagógica para articular múltiplos saberes. (O CulturaEduca está desenvolvendo um material especialmente
+                          para este fim - disponível em breve);
+                          <br><br>
+                          - diretores, professores e a equipe de coordenação das escolas podem usar as funcionalidades do mapa e a
+                          visualização de dados para elaborar ou aperfeiçoar seu projeto pedagógico;
+                          <br><br>
+                          - gestores públicos podem usar o mapa para visualizar informações necessárias ao planejamento de políticas públicas;
+                          <br><br>
+                          - cidadãos interessados em conhecer melhor seu próprio território podem usar o mapa para se aproximar de
+                          instituições, escolas e outras iniciativas;
+                          <br><br>
+                          - ONGs, Pontos de Cultura, centros culturais e outras instituições de interesses afins podem articular uma
+                          rede que fortaleça suas ações;
+                          </p>
+                    </div>
+                  </div>
+                </div>
+                <span><hr><img src="/static/img/bandeira.png" alt="Enfeite decorativo"></span>
+                <div class="accordion-group">
+                  <div class="accordion-heading">
+                     <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion-faq" href="#accordion-element-936305">
+                      <h3>QUAIS TECNOLOGIAS SÃO UTILIZADAS NO MAPEAMENTO?</h3>
+                    </a>
+                  </div>
+                  <div id="accordion-element-936305" class="accordion-body collapse">
+                    <div class="accordion-inner">
+                            <p>O portal foi todo desenvolvido em tecnologias livres, visando uma integração ao
+                            <a href="http://www.softwarepublico.gov.br/">
+                              Portal do Software Público Brasileiro.
+                            </a>
+                            O principal diferencial é o uso do <a href="http://postgis.net/">PostGIS</a>, que é o banco
+                             de dados geográfico.O framework utilizado é o <a href="http://geodjango.org/">GeoDjango</a>,
+                             os mapas são gerados a partir do <a href="http://www.openstreetmap.org/">OpenStreetMap</a>
+                             e <a href="http://www.openlayers.org/">OpenLayers</a>.
+                           </p>
+                    </div>
+                  </div>
+                </div>
+                 <span><hr><img src="/static/img/bandeira.png" alt="Enfeite decorativo"></span>
+                 <div class="accordion-group">
+                  <div class="accordion-heading">
+                     <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion-faq" href="#accordion-element-936306">
+                      <h3>QUEM DESENVOLVE O PORTAL CULTURAEDUCA?</h3>
+                    </a>
+                  </div>
+                  <div id="accordion-element-936306" class="accordion-body collapse">
+                    <div class="accordion-inner">
+                      <p>O CulturaEduca é resultado do projeto "Mapeamento das Iniciativas de Cultura e Educação", parceria entre o
+                        Instituto Lidas, a Secretaria de Políticas Culturais do Ministério da Cultura (MinC) e a Secretaria de Educação
+                         Básica do Ministério da Educação (MEC). Membros dessas instituições formam um Comitê Gestor que está
+                         debatendo as relações entre cultura e educação e as possibilidades de levantamento de dados sobre essas relações.
+                          <br>
+                          <br>
+                          O Instituto Lidas trabalha com tecnologias de geoprocessamento voltadas à transformação social há mais
+                          de 20 anos. Saiba mais: <a href="http://lidas.org.br/">http://lidas.org.br/</a>
+                          <br>
+                          <br>
+                          A Casa das Artes de Educar, ONG do Rio de Janeiro, é parceira do Instituto Lidas na pesquisa e produção
+                          de conteúdo do portal Cultura Educa;
+                          <br>
+                          <br>
+                          O desenvolvimento de tecnologias para o Portal é feito pela <a href="http://www.nodeware.com.br">Nodeware</a>
+                        </p>
+                        <br>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div><!-- END OF Accordion -->
+            </div>
+          </div><!--bevel tr folded-->
+    </div>
+  </div>
+{% endblock %}

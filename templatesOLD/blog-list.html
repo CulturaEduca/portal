@@ -1,0 +1,115 @@
+{% extends 'bootstrap.html' %}
+{% block conteudo %}
+  <!-- Jquery + Validate plugin -->
+  <script src="/static/js/jquery-v2.0.min.js"></script>
+  <script src="/static/js/jquery.validate.min.js"></script>
+  <!-- Scripts specific to this page -->
+  <script src="/static/js/script-validate.js"></script>
+{% load humanize %}
+<div class="row-fluid">
+  <div class="span6">
+    <div class="bevel tr folded foldverde">
+      <div class="box-blog">
+        <h5>{{ post.titulo }}<h5>
+        <h6>{{ post.data_publicacao }}</h6>
+        <section class="post">
+            <article>
+                <p>
+                  {{ post.conteudo|safe }}
+                </p>
+            </article>
+            <article class="blog-tags">
+                {% for tag in post.tags.all %}
+                    <p>{{ tag }}</p>
+                {% endfor %}
+            </article>
+        </section>
+        <hr>
+        <section class="Comentarios">
+        {% if comentarios %}
+          <h5>COMENTÁRIOS</h5>
+          {% for comentario in comentarios %}
+          <blockquote>
+            <p>
+              {{ comentario.comentario }}
+            </p><small>{{ comentario.nome }}, {{ comentario.data_hora|naturaltime }}</small>
+          </blockquote>
+          {% endfor %}
+        {% else %}
+          <h5>Nenhum comentário ainda</h5>
+        {% endif %}
+        </section>
+        <hr>
+
+           <section class="comentar">
+            <form class="form-comentar" method="post" action="{% url 'post' post.slug %}">
+              <fieldset>
+                <legend>COMENTAR</legend>
+                <label {% if form.nome.errors %}class = "erro"{% endif %}>Nome</label>{{ form.nome }} {{ form.nome.errors }}
+                <label>E-mail</label>{{ form.email }} {{ form.email.errors }}
+                <textarea placeholder="Seu Comentário" rows="2" name="comentario"></textarea> {{ form.comentario.errors }}
+                <button type="submit" class="btn-verde pull-right">Publicar</button>
+              </fieldset>
+            </form>
+          </section>
+
+      </div><!--box-blog-->
+    </div><!--bevel-tr-->
+  </div><!--span6-->
+
+<!-- END POST BLOG -->
+
+  <div class="span6">
+    <div class="box-master bevel tr folded foldverde">
+      <!-- <div class="box-bloge">
+        <h5>SOBRE</h5>
+        <h6>OS AUTORES</h6>
+        <section class="blog-autores">
+            <img src="/static/img/icon-autor.png" alt="">
+            <p>Autor: Redação</p>
+        </section>
+      </div> -->
+    </div><!--bevel tr-->
+    <div class="bevel tr folded foldverde">
+      <div class="box-bloge box-posts">
+        <h5>BLOG</h5>
+        <h6>Posts mais lidos</h6>
+        <section>
+          {% for lista in lista_posts %}
+          <article>
+          {% if lista.imagem_destaque %}
+            <a class="pull-left" href=""><img src="/static/media/{{ lista.imagem_destaque }}" alt="" width='30' height='30'></a>
+          {% else %}
+            <a class="pull-left" href=""><img src="/static/img/thumbs1.jpg" alt=""></a>
+          {% endif %}
+            <a href="{% url 'post' lista.slug %} ">
+             <p>
+                  {% if post.titulo%}
+                            {{post.titulo|striptags|truncatechars:45}}
+                    {% else %}
+                            SEM TíTULO
+                    {% endif %}
+                </p>
+                <p>
+                  {% if post.resumo %}
+                            {{ post.resumo|striptags|truncatechars:100 }}
+                      {% else %}
+                            {{ post.conteudo|striptags|truncatechars:100}}
+                      {% endif %}
+                </p>
+              <span class="tri"></span>
+            </a>
+          </article>
+          <br>
+          {% endfor %}
+        </section>
+      </div>
+    </div><!--bevel tr-->
+    <div class="blog-tags">
+        {% for tag in post.tags.all %}
+            <p>{{ tag }}</p>
+        {% endfor %}
+    </div><!--blog-tags-->
+  </div><!--span6-->
+</div>
+{% endblock %}

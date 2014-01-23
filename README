@@ -1,0 +1,19 @@
+###
+Projeto: Cultura Educa
+Versão Final - 2013
+Nodeware
+###
+
+IMPORTANTE: Sempre na instalação de novos módulos, 
+o REQUIREMENTS precisa ser atualizado!
+
+Caso seja necessária a instalação de algum outro módulo,
+atualize o REQUIREMENTS com:
+
+pip freeze > REQUIREMENTS
+
+###
+
+Configure o editor para transformar TABs em Espaços
+
+Tabulação padrão: 4 espaços

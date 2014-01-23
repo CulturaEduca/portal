@@ -1,0 +1,100 @@
+{% extends 'bootstrap.html' %}
+{% block conteudo %}
+        <div class="row-fluid centralizar">
+          <div class="span12">
+            <div class="row-fluid">
+              <div class="span6">
+
+                  <div class="box-futuro">
+                    <span><p>MAPEAMENTO COLABORATIVO DE TERRITÓRIOS EDUCATIVOS</p></span>
+                    <a href="/mapa"><img src="/static/img/desenho-aplic.jpg" alt=""></a>
+                  </div><!--box-futuro-->
+                </div><!--span6-->
+              <div class="span6">
+<!--carousel-->
+              <ul class="bxslider">
+                 {% for destaque in destaques %}
+                <li>
+                  <a href="{% url 'post' destaque.slug %}">
+                    <img src="/static/media/{{ destaque.imagem_destaque }}" title="{{ destaque.titulo }}"/>
+                  </a>
+                </li>
+                {% endfor %}
+              </ul>
+<!--Fim carousel-->
+              </div><!--span6-->
+            </div><!--row-fluid-->
+            <div class="row-fluid">
+              <div class="span6">
+              <div class="bevel tr">
+                <img class="pull-right trimg" src="/static/img/tri-laranjaw.png" alt="detalhe triangulo">
+                <div class="box-post-home">
+                  <section>
+                    <article>
+                      <a href="/mapa">
+                        <p>
+                          Escolas públicas brasileiras no centro do mapa;
+                          ao redor delas, praças, pontos de cultura, prédios,
+                          bibliotecas, oficinas, arte, artistas, trabalhadores das
+                          mais diversas áreas, pessoas com diferentes
+                          talentos: o diálogo com a comunidade inspira o cotidiano
+                          escolar e multiplica boas experiências! O portal CulturaEduca
+                          é uma ferramenta criada para estimular esse diálogo,
+                          mapeando os territórios educativos do país de forma
+                          colaborativa. Atualmente, estamos trabalhando em nossas
+                          bases de dados - por enquanto, você pode acessar os perfis
+                          socioeconômicos dos territórios e as características das escolas.
+                          Em breve, você poderá interagir e inserir pontos no mapa,
+                          entre outras funcionalidades.
+                        </p>
+                      </a>
+                    </article>
+                  </section>
+                </div>
+              </div><!--folded-->
+              </div><!--span6-->
+              <div class="span6">
+              <div class="bevel tr">
+                <img class="pull-right trimg" src="/static/img/tri-verdew.png" alt="detalhe triangulo">
+                <div class="box-posts">
+                  <h4>BLOG</h4>
+                  <h5>Últimos posts</h5>
+                  <hr>
+                      <section>
+                        {% for post in posts %}
+                        <article>
+                          <a href="{% url 'post' post.slug %}">
+                            {% if post.imagem_destaque %}
+                            <img class="pull-left" src="/static/media/{{ post.imagem_destaque }}" alt="thumbnail da imagem de destaque">
+                            {% else %}
+                            <img class="pull-left" src="/static/img/{% cycle 'thumbs1.jpg' 'thumbs2.jpg' 'thumbs3.jpg' %}" alt="thumbnail da imagem de destaque">
+                            {% endif %}
+                            <p>
+                              {% if post.titulo %}
+                                        {{ post.titulo|striptags|truncatechars:45 }}
+                                {% else %}
+                                        SEM TíTULO
+                                {% endif %}
+                            </p>
+                            <p>
+                              {% if post.resumo %}
+                                        {{ post.resumo|striptags|truncatechars:100 }}
+                                  {% else %}
+                                        {{ post.conteudo|striptags|truncatechars:100}}
+                                  {% endif %}
+                            </p>
+                          </a>
+                          <!-- <span class="post-data">{{ post.data_publicacao|date:'d/m/Y'}}</span> -->
+                        </article>
+                        <hr>
+                        {% endfor %}
+                      </section>
+                </div>
+              </div><!--folded-->
+            </div><!--span6-->
+            </div><!--row-fluid-->
+
+          </div><!--span12-->
+        </div><!--row-fluid-->
+{% endblock %}
+

@@ -1,0 +1,1461 @@
+{% extends 'bootstrap.html' %}
+{% block title %}Território Educativo {{ escola.nome|title }} - Cultura Educa{% endblock %}
+{% block conteudo %}
+{% load humanize %}
+
+<script src="/static/js/ol/OpenLayers.js"></script>
+<script src="/static/js/territorio.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script src="/static/js/highcharts/highcharts.js"></script>
+<script src="/static/js/highcharts/modules/exporting.js"></script>
+<div class="row-fluid clearfix">
+    <div class="row-fluid span12 breadcrumb-mapa">
+        <p><a href="{% url 'mapa' %}">MAPA</a> > <a href="{% url 'mapa' %}">{{ escola.ibge.estado.sigla }}</a> > <a href="{% url 'mapa_municipio' escola.ibge.estado.sigla escola.ibge.nome|slugify %}">{{ escola.ibge.nome }}</a> > TERRITÓRIO EDUCATIVO</p>
+        <span style="visibility:hidden;display:none" id='longitude_centro'>{{ longitude }}</span>
+        <span style="visibility:hidden;display:none" id='latitude_centro'>{{ latitude }}</span>
+        <span style="visibility:hidden;display:none" id='codigo_inep'>{{ escola.codigo_inep }}</span>
+        <span style="visibility:hidden;display:none" id='codigo_ibge'>{{ escola.ibge.cd_geocodm }}</span>
+        <div class="row-fluid span12" id="mapa" style="max-width:960px; height:500px;"></div>
+    </div><!--breadcrumb-->
+</div>
+<div class="row-fluid">
+    <div class="span12">
+        <div class="tabbable" id="tabs-mapas">
+        <p>TERRITÓRIO EDUCATIVO {{ escola.nome }}</p>
+        <ul class="nav nav-tabs">
+          <li class="active">
+            <a href="#painel-perfil" data-toggle="tab">PERFIL</a>
+            <span class="tripod"></span>
+          </li>
+          <li>
+            <a href="#painel-equipamentos" data-toggle="tab">EQUIPAMENTOS</a>
+            <span class="tripod"></span>
+          </li>
+          <li>
+            <a href="#painel-escola" data-toggle="tab">ESCOLA</a>
+            <span class="tripod"></span>
+          </li>
+          <li>
+            <a href="#painel-mural" data-toggle="tab">MURAL</a>
+            <span class="tripod"></span>
+          </li>
+          <li>
+            <a href="#painel-usuarios" data-toggle="tab">USUÁRIOS</a>
+            <span class="tripod"></span>
+          </li>
+            <li>
+                <a href="#painel-iniciativas" data-toggle="tab">INICIATIVAS</a>
+                <span class="tripod"></span>
+          </li>
+        </ul>
+        <section class="tabs-conteudo row-fluid">
+            <div class="tab-content span12">
+<!-- TAB PERFIL -->
+                <div class="tab-pane active" id="painel-perfil">
+                    <div class="span6 coluna1">
+                    <!--Conteudo-->
+                            <section class="box-bevelw tr geral">
+                            <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
+                            <p>Identificação</p><span id="about-this"></span>
+                            <article>
+                            <div class="datagrid geral tdw">
+                                <table>
+                                    <tbody>
+<!--                                         <tr>
+                                            <td>Área em Km2</td>
+                                            <td>1,5Km2</td>
+                                        </tr> -->
+                                        <tr>
+                                            <td>Número de moradores</td>
+                                            <td>{{ total_moradores|intcomma }} </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Número de domicílios</td>
+                                            <td>{{ total_domicilios|intcomma }} </td>
+                                        </tr>
+<!--                                  <tr>
+                                            <td>Densidade demográfica</td>
+                                            <td>{{ densidade_demografica }} </td>
+                                        </tr> -->
+                                        <tr>
+                                            <td>Média de moradores por domicílios</td>
+                                            <td>{{ media_moradores|intcomma }} </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Número de setores censitários</td>
+                                            <td>{{ numero_setores|intcomma }} </td>
+                                        </tr>
+                                        <tr class="hidden"></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                         </article>
+                        </section>
+
+                        <section class="box-bevelw tr">
+                            <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
+                          <p>RENDA</p>
+                            <div id="hc-renda-pessoas" style="max-width: 440px; min-height: 350px; margin: 0  auto;"></div>
+                            <p>&nbsp;</p>
+                            <div id="hc-renda-domicilios" style="max-width:440px; min-height: 270px; margin: 0  auto;"></div>
+                        </section>
+
+                            <section class="box-bevelw tr">
+                            <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
+                            <p>Infraestrutura Urbana</p><span id="about-this"></span>
+                            <article>
+                            <div class="datagrid">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td></td>
+                                            <td colspan="2">Domicílios</td>
+                                            <td colspan="2">Moradores</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td></td>
+                                            <td>Possui</td>
+                                            <td>Não Possui</td>
+                                            <td>Possui</td>
+                                            <td>Não Possui</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Arborização</td>
+                                            <td class="alt-d">{{ infra.d_arborizacao_s|intcomma }}</td>
+                                            <td class="alt-r">{{ infra.d_arborizacao_n|intcomma }}</td>
+                                            <td class="alt-d">{{ infra.m_arborizacao_s|intcomma }}</td>
+                                            <td class="alt-r">{{ infra.m_arborizacao_n|intcomma }}</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td>Calçada</td>
+                                            <td class="alt-de">{{ infra.d_calcada_s|intcomma }}</td>
+                                            <td class="alt-re">{{ infra.d_calcada_n|intcomma }}</td>
+                                            <td class="alt-de">{{ infra.m_calcada_s|intcomma }}</td>
+                                            <td class="alt-re">{{ infra.m_calcada_n|intcomma }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Iluminação    Pública</td>
+                                            <td class="alt-d">{{ infra.d_iluminacao_s|intcomma }}</td>
+                                            <td class="alt-r">{{ infra.d_iluminacao_n|intcomma }}</td>
+                                            <td class="alt-d">{{ infra.m_iluminacao_s|intcomma }}</td>
+                                            <td class="alt-r">{{ infra.m_iluminacao_n|intcomma }}</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td>Pavimentação</td>
+                                            <td class="alt-de" class="alt-d">{{ infra.d_pavimentacao_s }}</td>
+                                            <td class="alt-re">{{ infra.d_pavimentacao_n|intcomma }}</td>
+                                            <td class="alt-de">{{ infra.m_pavimentacao_s|intcomma }}</td>
+                                            <td class="alt-re">{{ infra.m_pavimentacao_n|intcomma }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Rampa para    cadeirante</td>
+                                            <td class="alt-d">{{ infra.d_rampa_cadeirante_s|intcomma }}</td>
+                                            <td class="alt-r">{{ infra.d_rampa_cadeirante_n|intcomma }}</td>
+                                            <td class="alt-d">{{ infra.m_rampa_cadeirante_s|intcomma }}</td>
+                                            <td class="alt-r">{{ infra.m_rampa_cadeirante_n|intcomma }}</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td>Esgoto a céu    aberto</td>
+                                            <td class="alt-de">{{ infra.d_esgoto_s|intcomma }}</td>
+                                            <td class="alt-re">{{ infra.d_esgoto_n|intcomma }}</td>
+                                            <td class="alt-de">{{ infra.m_esgoto_s|intcomma }}</td>
+                                            <td class="alt-re">{{ infra.m_esgoto_n|intcomma }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Lixo acumulado    na rua</td>
+                                            <td class="alt-d">{{ infra.d_lixo_s|intcomma }}</td>
+                                            <td class="alt-r">{{ infra.d_lixo_n|intcomma }}</td>
+                                            <td class="alt-d">{{ infra.m_lixo_s|intcomma }}</td>
+                                            <td class="alt-r">{{ infra.m_lixo_n|intcomma }}</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td class="table-text-aright" colspan="5">Fonte: Censo    Demográfico 2010 - IBGE
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                         </article>
+                        </section><!--INFRA-ESTRUTURA URBANA-->
+
+
+                        <section class="box-bevelw tr">
+                            <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
+                            <p>Características dos Domicílios</p><span id="about-this"></span>
+                            <article>
+                            <div class="datagrid">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td></td>
+                                            <td colspan="2">Domicílios</td>
+                                            <td colspan="2">Moradores</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td></td>
+                                            <td>Nº</td>
+                                            <td>%</td>
+                                            <td>Nº</td>
+                                            <td>%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Casas</td>
+                                            <td>{{ domicilio_por_setor.casas|intcomma }}</td>
+                                            <td>{{ domicilio_por_setor.casas_p|floatformat|intcomma }}</td>
+                                            <td>{{ moradores.casas|intcomma }}</td>
+                                            <td>{{ moradores.casas_p|floatformat|intcomma }}</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td>Apartamentos</td>
+                                            <td>{{ domicilio_por_setor.apartamentos|intcomma }}</td>
+                                            <td>{{ domicilio_por_setor.apartamentos_p|floatformat|intcomma }}</td>
+                                            <td>{{ moradores.apartamentos|intcomma }}</td>
+                                            <td>{{ moradores.apartamentos_p|floatformat|intcomma }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Sem abastecimento de água por rede geral</td>
+                                            <td>{{ domicilio_por_setor.sem_agua|intcomma }}</td>
+                                            <td>{{ domicilio_por_setor.sem_agua_p|floatformat|intcomma }}</td>
+                                            <td>{{ moradores.sem_agua|intcomma }}</td>
+                                            <td>{{ moradores.sem_agua_p|floatformat|intcomma }}</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td>Sem banheiro ou sanitáro</td>
+                                            <td>{{ domicilio_por_setor.sem_banheiro|intcomma }}</td>
+                                            <td>{{ domicilio_por_setor.sem_banheiro_p|floatformat|intcomma }}</td>
+                                            <td>{{ moradores.sem_banheiro|intcomma }}</td>
+                                            <td>{{ moradores.sem_banheiro_p|floatformat|intcomma }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Sem lixo coletado</td>
+                                            <td>{{ domicilio_por_setor.sem_lixo|intcomma }}</td>
+                                            <td>{{ domicilio_por_setor.sem_lixo_p|floatformat|intcomma }}</td>
+                                            <td>{{ moradores.sem_lixo|intcomma }}</td>
+                                            <td>{{ moradores.sem_lixo_p|floatformat|intcomma }}</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td>Sem energia elétrica</td>
+                                            <td>{{ domicilio_por_setor.sem_energia|intcomma }}</td>
+                                            <td>{{ domicilio_por_setor.sem_energia_p|floatformat|intcomma }}</td>
+                                            <td>{{ moradores.sem_energia|intcomma }}</td>
+                                            <td>{{ moradores.sem_energia_p|floatformat|intcomma }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="table-text-aright" colspan="5">Fonte: Censo    Demográfico 2010 - IBGE</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                         </article>
+                        </section>
+                    <!--/Conteudo-->
+                    </div><!--span6 coluna1-->
+
+                    <div class="span6 coluna2">
+                    <!--Conteudo-->
+                    <section class="box-bevelw tr">
+                        <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
+                        <p>População</p>
+                        <div id="hc-piramide-etaria" style="max-width: 440px; min-height: 400px; margin: 0  auto;"></div>
+                        <div id="hc-populacao-cor" style="max-width: 440px; min-height: 300px; margin: 0  auto;"></div>
+                    </section>
+                     <section class="box-bevelw tr">
+                            <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
+                            <p>Responsáveis por domicílios</p><span id="about-this"></span>
+                            <article>
+                            <div class="datagrid tdw">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td rowspan="2">&nbsp;</td>
+                                            <td colspan="2">Homens</td>
+                                            <td colspan="2">Mulheres</td>
+                                            <td colspan="2">Total</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td>Nº</td>
+                                            <td>% </td>
+                                            <td>Nº</td>
+                                            <td>% </td>
+                                            <td>Nº</td>
+                                            <td>% </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Responsáveis</td>
+                                            <td class="alt-h">{{ responsaveis.h_responsaveis|intcomma }}</td>
+                                            <td class="alt-h">{{ responsaveis.h_responsaveis_p|floatformat|intcomma }}</td>
+                                            <td class="alt-m">{{ responsaveis.m_responsaveis|intcomma }}</td>
+                                            <td class="alt-m">{{ responsaveis.m_responsaveis_p|floatformat|intcomma }}</td>
+                                            <td class="alt-t">{{ responsaveis.t_responsaveis|intcomma }}</td>
+                                            <td class="alt-t">{{ responsaveis.t_responsaveis_p|floatformat|intcomma }}</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td>Não    alfabetizados</td>
+                                            <td class="alt-he">{{ responsaveis.h_nao_alfabetizados|intcomma }}</td>
+                                            <td class="alt-he">{{ responsaveis.h_nao_alfabetizados_p|floatformat|intcomma }}</td>
+                                            <td class="alt-me">{{ responsaveis.m_nao_alfabetizados|intcomma }}</td>
+                                            <td class="alt-me">{{ responsaveis.m_nao_alfabetizados_p|floatformat|intcomma }}</td>
+                                            <td class="alt-te">{{ responsaveis.t_nao_alfabetizados|intcomma }}</td>
+                                            <td class="alt-te">{{ responsaveis.t_nao_alfabetizados_p|floatformat|intcomma }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Com até 18    anos</td>
+                                            <td class="alt-h">{{ responsaveis.h_ate_18|intcomma }}</td>
+                                            <td class="alt-h">{{ responsaveis.h_ate_18_p|floatformat|intcomma }}</td>
+                                            <td class="alt-m">{{ responsaveis.m_ate_18|intcomma }}</td>
+                                            <td class="alt-m">{{ responsaveis.m_ate_18_p|floatformat|intcomma }}</td>
+                                            <td class="alt-t">{{ responsaveis.t_ate_18|intcomma }}</td>
+                                            <td class="alt-t">{{ responsaveis.t_ate_18_p|floatformat|intcomma }}</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td>Sem rendimento</td>
+                                            <td class="alt-he">{{ responsaveis.h_sem_rendimento|intcomma }}</td>
+                                            <td class="alt-he">{{ responsaveis.h_sem_rendimento_p|floatformat|intcomma }}</td>
+                                            <td class="alt-me">{{ responsaveis.m_sem_rendimento|intcomma }}</td>
+                                            <td class="alt-me">{{ responsaveis.m_sem_rendimento_p|floatformat|intcomma }}</td>
+                                            <td class="alt-te">{{ responsaveis.t_sem_rendimento|intcomma }}</td>
+                                            <td class="alt-te">{{ responsaveis.t_sem_rendimento_p|floatformat|intcomma }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Rendimento até    1 SM</td>
+                                            <td class="alt-h">{{ responsaveis.h_rendimento_1sm|intcomma }}</td>
+                                            <td class="alt-h">{{ responsaveis.h_rendimento_1sm_p|floatformat|intcomma }}</td>
+                                            <td class="alt-m">{{ responsaveis.m_rendimento_1sm|intcomma }}</td>
+                                            <td class="alt-m">{{ responsaveis.m_rendimento_1sm_p|floatformat|intcomma }}</td>
+                                            <td class="alt-t">{{ responsaveis.t_rendimento_1sm|intcomma }}</td>
+                                            <td class="alt-t">{{ responsaveis.t_rendimento_1sm_p|floatformat|intcomma }}</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td  class="table-text-aright" colspan="7">Fonte: Censo    Demográfico 2010 - IBGE</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                         </article>
+                    </section>
+                    <!--Conteudo-->
+                    </div><!--span6 coluna2-->
+            </div><!--tab-pane / panel-perfil-->
+<!-- /TAB PERFIL -->
+
+<!-- TAB EQUIPAMENTOS -->
+                  <div class="tab-pane" id="painel-equipamentos">
+                    <div class="span12">
+                    <!--Conteudo-->
+                        <section class="box-bevelw tr mr-20">
+                            <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
+                            <p>{{ pontos_cultura.count }} Pontos de Cultura</p><span id="about-this"></span>
+                            <article>
+                            <div class="datagrid">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td>{% if not pontos_cultura %}Nenhum Ponto de Cultura{% else %}{% endif %}</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                        {% for ponto_cultura in pontos_cultura %}
+                                        <tr {% cycle '' 'class="alt"' %}>
+                                            <td><a href="/ponto_cultura/{{ ponto_cultura.id }}/">{{ ponto_cultura.projeto }}</a> - {{ ponto_cultura.tipo_logradouro|title }} {{ ponto_cultura.nome_logradouro|title }}, {{ ponto_cultura.numero_logradouro }}</td>
+                                            <td>{{ ponto_cultura.distancia|floatformat:2 }} metros</td>
+                                        </tr>
+                                        {% endfor %}
+                                        <tr class="hidden">
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                         </article>
+                        </section>
+
+                        <section class="box-bevelw tr mr-20">
+                            <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
+                            <p>{% if bibliotecas.count %}{{ bibliotecas.count }}{% endif %} Bibliotecas</p><span id="about-this"></span>
+                            <article>
+                            <div class="datagrid">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td>{% if not bibliotecas %}Nenhuma Biblioteca{% else %}{% endif %}</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                        {% for biblioteca in bibliotecas %}
+                                        <tr {% cycle '' 'class="alt"' %}>
+                                            <td><a href="/biblioteca/{{ biblioteca.id }}/">{{ biblioteca.nome }}</a>  - {{ biblioteca.tipo_logradouro|title }} {{ biblioteca.nome_logradouro|title }}, {{ biblioteca.numero_logradouro }}</td>
+                                            <td></td>
+                                        </tr>
+                                        {% endfor %}
+                                        <tr class="hidden">
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                         </article>
+                        </section>
+                       
+                        <section class="box-bevelw tr mr-20">
+                            <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
+                            <p>{% if cinemas %}{{ cinemas.count }}{% endif %} Cinemas</p><span id="about-this"></span>
+                            <article>
+                            <div class="datagrid">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td>{% if not cinemas %}Nenhum Cinema{% else %}{% endif %}</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                        {% for cinema in cinemas %}
+                                        {% if cinema.nome %}
+                                        <tr {% cycle '' 'class="alt"' %}>
+                                            <td><a href="/cinema/{{ cinema.id }}/">{{ cinema.nome }}</a>  - {{ cinema.tipo_logradouro|title }} {{ cinema.nome_logradouro|title }}, {{ cinema.numero_logradouro }}</td>
+                                            <td></td>
+                                        </tr>
+                                        {% endif %}
+                                        {% endfor %}
+                                        <tr class="hidden">
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                         </article>
+                        </section>
+
+                        <section class="box-bevelw tr mr-20">
+                            <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
+                            <p>{% if museus %}{{ museus.count }}{% endif %} Museus</p><span id="about-this"></span>
+                            <article>
+                            <div class="datagrid">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td>{% if not museus %}Nenhum Museu{% else %}{% endif %}</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                        {% for museu in museus %}
+                                        <tr {% cycle '' 'class="alt"' %}>
+                                            <td><a href="/museu/{{ museu.id }}/">{{ museu.nome }}</a> - {{ museu.tipo_logradouro|title }} {{ museu.nome_logradouro|title }}, {{ museu.numero_logradouro }}</td>
+                                            <td></td>
+                                        </tr>
+                                        {% endfor %}
+                                        <tr class="hidden">
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                         </article>
+                        </section>
+                        
+                        
+                        <section class="box-bevelw tr mr-20">
+                            <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
+                            <p>{% if teatros %}{{ teatros.count }}{% endif %} Teatros</p><span id="about-this"></span>
+                            <article>
+                            <div class="datagrid">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td>{% if not teatros %}Nenhum Teatro{% else %}{% endif %}</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                        {% for teatro in teatros %}
+                                        {% if teatro.nome %}
+                                        <tr {% cycle '' 'class="alt"' %}>
+                                            <td><a href="/teatro/{{ teatro.id }}/">{{ teatro.nome }}</a> - {{ teatro.tipo_logradouro|title }} {{ teatro.nome_logradouro|title }}, {{ teatro.numero_logradouro }} </td>
+                                            <td></td>
+                                        </tr>
+                                        {% endif %}
+                                        {% endfor %}
+                                        <tr class="hidden">
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                         </article>
+                        </section>
+
+                        
+                        
+                       
+                        
+                        <section class="box-bevelw tr mr-20">
+                            <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
+                            <p>{% if centros_ciencia %}{{ centros_ciencia.count }}{% endif %} Centros de Ciência</p><span id="about-this"></span>
+                            <article>
+                            <div class="datagrid">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td>{% if not centros_ciencia %}Nenhum Centro de Ciência{% else %}{% endif %}</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                        {% for cc in centros_ciencia %}
+                                        <tr {% cycle '' 'class="alt"' %}>
+                                            <td><a href="/centro_ciencia/{{ cc.id }}" />{{ cc.nome }}</a> - {{ cc.tipo_logradouro|title }} {{ cc.nome_logradouro|title }}, {{ cc.numero_logradouro }}</td>
+                                            <td></td>
+                                        </tr>
+                                        {% endfor %}
+                                        <tr class="hidden">
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                         </article>
+                        </section>
+                        
+
+                        <section class="box-bevelw tr mr-20">
+                            <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
+                            <p>{% if salas_verdes %}{{ salas_verdes.count }}{% endif %} Salas Verdes</p><span id="about-this"></span>
+                            <article>
+                            <div class="datagrid">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td>{% if not salas_verdes %}Nenhuma Sala Verde{% else %}{% endif %}</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                        {% for sala_verde in salas_verdes %}
+                                        <tr {% cycle '' 'class="alt"' %}>
+                                            <td><a href="/sala_verde/{{ sala_verde.id }}/">{{ sala_verde.nome }}</a> - {{ sala_verde.tipo_logradouro|title }} {{ sala_verde.nome_logradouro|title }}, {{ sala_verde.numero_logradouro }}</td>
+                                            <td></td>
+                                        </tr>
+                                        {% endfor %}
+                                        <tr class="hidden">
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                         </article>
+                        </section>
+
+                        <section class="box-bevelw tr mr-20">
+                            <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
+                            <p>{% if cras %}{{ cras.count }}{% endif %} CRAS</p><span id="about-this"></span>
+                            <article>
+                            <div class="datagrid">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td>{% if not cras %}Nenhum CRA{% else %}{% endif %}</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                        {% for cra in cras %}
+                                        <tr {% cycle '' 'class="alt"' %}>
+                                            <td><a href="/cra/{{ cra.id }}/">{{ cra.nome }}</a> - {{ cra.tipo_logra }} {{ cra.nome_logra }}, {{ cra.num_lograd }}</td>
+                                            <td></td>
+                                        </tr>
+                                        {% endfor %}
+                                        <tr class="hidden">
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                         </article>
+                        </section>
+
+                    <section class="box-bevelw tr mr-20">
+                            <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
+                            <p>{% if equipamentos_saude %}{{ equipamentos_saude.count }}{% endif %} Equipamentos de saúde</p><span id="about-this"></span>
+                            <article>
+                            <div class="datagrid">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td>{% if equipamentos_saude %}{{ equipamentos_saude_count }}{% else %}Nenhum Equipamento de Saúde{% endif %}</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                        {% for saude in equipamentos_saude %}
+                                        <tr {% cycle '' 'class="alt"' %}>
+                                            <td><a href="/saude/{{ saude.id }}/">{{ saude.nome }}</a> - {{ saude.tipo_logra|title }} {{ saude.nome_logra|title }}, {{ saude.num_lograd }}</td>
+                                            <td></td>
+                                        </tr>
+                                        {% endfor %}
+                                        <tr class="hidden">
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                         </article>
+                        </section>
+
+
+                    <!--Conteudo-->
+                    </div><!--span12-->
+            </div><!--tab-pane / panel-mural-->
+<!-- TAB EQUIPAMENTOS -->
+
+<!-- TAB ESCOLA -->
+            <div class="tab-pane" id="painel-escola">
+                    <div class="span6 coluna1">
+                    <!--Conteudo-->
+                    <section class="box-bevelw tr geral">
+                            <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo" style="text-align: left;">
+                            <p>Identificação</p><span id="about-this"></span>
+                            <article>
+                            <div class="datagrid geral tdw">
+                                <table>
+                                    <tbody>
+                                       <tr>
+                                        <td>Código    INEP</td>
+                                        <td>{{ escola.codigo_inep }}</td>
+                                      </tr>
+                                      <tr>
+                                        <td>Localização</td>
+                                        <td>{{ escola.localizacao }}</td>
+                                      </tr>
+                                      <!-- <tr>
+                                        <td>Localização    diferenciada</td>
+                                        <td>{{ dados.id_localizacao_diferenciada }}</td>
+                                      </tr> -->
+                                      <tr>
+                                        <td>Esfera    Administrativa</td>
+                                        <td>{{ escola.dep_adm }}</td>
+                                      </tr>
+                                      <tr>
+                                        <td>Endereço</td>
+                                        <td> {{ escola.tipo_logradouro }} {{ escola.nome_logradouro }} {{ escola.numero_logradouro }}</td>
+                                      </tr>
+                                      <tr>
+                                        <td>Telefone</td>
+                                        <td>{{ escola.tel1 }} </td>
+                                      </tr>
+                                      <tr>
+                                        <td>Email</td>
+                                        <td>{{ escola.email }}</td>
+                                      </tr>
+                                      <tr>
+                                        <td>Diretor(a)</td>
+                                        <td>{{ escola.nome_diretor }}</td>
+                                      </tr>
+                                      <tr class="hidden"></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                         </article>
+                    </section>
+                    <section class="box-bevelw tr">
+                            <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
+                            <p>Modalidade e etapas de ensino</p><span id="about-this"></span>
+                            <article>
+                            <div class="datagrid">
+                                <table>
+                                    <tbody>
+                                       <tr class="alt">
+                                        <td>Educação    Infantil - Creche</td>
+                                        <td>{% if dados.id_reg_infantil_creche %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                      </tr>
+                                      <tr>
+                                        <td>Educação    Infantil  - Pré-escola</td>
+                                        <td>{% if dados.id_reg_infantil_preescola %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                      </tr>
+                                      <tr class="alt">
+                                        <td>Ensino    Fundamental 8 anos</td>
+                                        <td>{% if dados.id_reg_fund_8_anos %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                      </tr>
+                                      <tr>
+                                        <td>Ensino    Fundamental 9 anos</td>
+                                        <td>{% if dados.id_reg_fund_9_anos %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                      </tr>
+                                      <tr class="alt">
+                                        <td>Ensino Médio</td>
+                                        <td>{% if dados.id_reg_medio_medio %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                      </tr>
+                                      <tr>
+                                        <td>Ensino Médio    Integrado</td>
+                                        <td>{% if dados.id_reg_medio_integrado %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                      </tr>
+                                      <tr class="alt">
+                                        <td>Ensino Médio    Normal/Magistério</td>
+                                        <td>{% if dados.id_reg_medio_normal %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                      </tr>
+                                      <tr>
+                                        <td>Educação    Profissional</td>
+                                        <td>{% if dados.id_reg_medio_prof %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                      </tr>
+                                      <tr class="alt">
+                                        <td>Educação de    Jovens e Adultos - Ensino Fundamental</td>
+                                        <td>{% if dados.id_eja_fundamental %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                      </tr>
+                                      <tr>
+                                        <td>Educação de    Jovens e Adultos - Ensino Médio</td>
+                                        <td>{% if dados.id_eja_medio %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                      </tr>
+                                      <tr class="alt">
+                                        <td>Educação de    Jovens e Adultos - Ensino Fundamental (Projovem - urbano)</td>
+                                        <td>{% if dados.id_eja_projovem %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                      </tr>
+                                      <tr>
+                                            <td colspan="2">Fonte: Censo Escolar da Educação Básica 2012 - INEP/MEC</td>
+                                      </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                         </article>
+                        </section>
+
+                            <section class="box-bevelw tr">
+                            <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
+                            <p>Programas</p><span id="about-this"></span>
+                            <article>
+                            <div class="datagrid">
+                                <table>
+                                    <tbody>
+                                        <tr class="alt">
+                                            <td>Programa Mais Educação</td>
+                                            <td>{% if dados.prog_mais_educacao %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                        </tr>
+                                        <!--<tr>
+                                            <td>Programa Mais    Cultura</td>
+                                            <td>&nbsp;</td>
+                                        </tr> -->
+                                        <tr>
+                                            <td>Programa    Escola Aberta</td>
+                                            <td>{% if dados.prog_escola_abertas %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td>Programa    Ensino Médio Inovador</td>
+                                            <td>{% if dados.prog_em_inovador %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Programa Saúde    nas Escolas</td>
+                                            <td>{% if dados.prog_pse %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td>Programa    Brasil Alfabetizado</td>
+                                            <td>{% if dados.prog_pba %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                        </tr>
+                                            <td colspan="2">
+                                                Fonte: SEB/MEC -2013, Censo Escolar da Educação Básica 2012 - INEP/MEC
+                                            </td>
+                                    </tbody>
+                                </table>
+                            </div>
+                         </article>
+                        </section>
+
+                            <section class="box-bevelw tr">
+                            <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
+                            <p>Programa Mais Educação</p><span id="about-this"></span>
+                            <article>
+                            <div class="datagrid tdae tdw">
+                                <table>
+                                    <tbody>
+                                         <tr class="alt">
+                                            <td >Coordenador</td>
+                                            <td>{{ dados.coordenador_mais_educacao }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Email do    Coordenador</td>
+                                            <td>{{ dados.emailcoordenador_mais_educacao }}</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td>Total de alunos atendidos</td>
+                                            <td>{{ dados.num_alunos_mais_educacao }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Atividades</td>
+                                            <td>
+                                            {% for programa in escola.atividades.all %}
+                                            {{ programa }}<br>
+                                            {% endfor %}
+                                            </td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td colspan="2">      Fonte: SEB/MEC - 2013</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                         </article>
+                        </section>
+                    <!--Conteudo-->
+                </div><!--span6/coluna1-->
+                <div class="span6 coluna2 ml-0">
+                    <!--Conteudo-->
+                        <section class="box-bevelw tr">
+                            <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
+                            <p>Dados Gerais</p><span id="about-this"></span>
+                            <article>
+                            <div class="datagrid">
+                                <table>
+                                    <tbody>
+                                        <tr class="alt">
+                                            <td>Abre no fim de semana</td>
+                                            <td>{% if dados.id_abre_final_semana %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Número de    funcionários</td>
+                                            <td>{{ dados.num_funcionarios }}</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td>Atividade    complementar</td>
+                                            <td>{% if dados.id_mod_ativ_complementar %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Fornece    alimentação</td>
+                                            <td>{% if dados.id_alimentacao %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td>Atendimento    Educacional Especializado</td>
+                                            <td>{% if dados.id_aee %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Educação    indígena</td>
+                                            <td>{% if dados.id_educacao_indigena %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td colspan="2">Fonte: Censo Escolar da Educação Básica 2012 - INEP/MEC</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                         </article>
+                        </section>
+
+                            <section class="box-bevelw tr">
+                            <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
+                            <p>Infraestrutura (Dependências)</p><span id="about-this"></span>
+                            <article>
+                            <div class="datagrid">
+                                <table>
+                                    <tbody>
+                                        <tr class="alt">
+                                            <td>Salas de    aula existentes</td>
+                                            <td>{{ dados.num_salas_existentes }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Salas de aula    utilizadas</td>
+                                            <td>{{ dados.num_salas_utilizadas }}</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td>Biblioteca</td>
+                                            <td>{% if dados.id_biblioteca %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Sala de    leitura</td>
+                                            <td>{% if dados.id_sala_leitura %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td>Laboratório de    informática</td>
+                                            <td>{% if dados.id_laboratorio_informatica %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Laboratório de    ciências</td>
+                                            <td>{% if dados.id_laboratorio_ciencias %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td>Quadra de    esportes coberta</td>
+                                            <td>{% if dados.id_quadra_esportes_coberta %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Quadra de    esportes descoberta</td>
+                                            <td>{% if dados.id_quadra_esportes_descoberta %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td>Sala para a    diretoria</td>
+                                            <td>{% if dados.id_sala_diretoria %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Sala para os    professores</td>
+                                            <td>{% if dados.id_sala_professor %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td>Sala de    atendimento especial</td>
+                                            <td>{% if dados.id_sala_atendimento_especial %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                        </tr>
+                                        <tr>
+                                            <td >Auditório</td>
+                                            <td>{% if dados.id_auditorio %}<img src="/static/img/yes.png" alt="sim" />{% else %}<img src="/static/img/no.png" alt="nao" />{% endif %}</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td>Cozinha</td>
+                                            <td>{% if dados.id_cozinha %}<img src="/static/img/yes.png" alt="sim" />{% else %}<img src="/static/img/no.png" alt="nao" />{% endif %}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Pátio coberto</td>
+                                            <td>{% if dados.id_patio_coberto %}<img src="/static/img/yes.png" alt="sim" />{% else %}<img src="/static/img/no.png" alt="nao" />{% endif %}</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td>Pátio    descoberto</td>
+                                            <td>{% if dados.id_patio_descoberto %}<img src="/static/img/yes.png" alt="sim" />{% else %}<img src="/static/img/no.png" alt="nao" />{% endif %}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Área Verde</td>
+                                            <td>{% if dados.id_area_verde %}<img src="/static/img/yes.png" alt="sim" />{% else %}<img src="/static/img/no.png" alt="nao" />{% endif %}</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td>Sanitário    dentro do prédio da escola</td>
+                                            <td>{% if dados.id_sanitario_dentro_predio %}<img src="/static/img/yes.png" alt="sim" />{% else %}<img src="/static/img/no.png" alt="nao" />{% endif %}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Sanitário fora    do prédio da escola</td>
+                                            <td>{% if dados.id_sanitario_fora_predio %}<img src="/static/img/yes.png" alt="sim" />{% else %}<img src="/static/img/no.png" alt="nao" />{% endif %}</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td >Dependências e vias adequadas a alunos com deficiência ou    mobilidade reduzida</td>
+                                            <td>{% if dados.id_dependencias_pne %}<img src="/static/img/yes.png" alt="sim" />{% else %}<img src="/static/img/no.png" alt="nao" />{% endif %}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">Fonte: Censo Escolar da Educação Básica 2012 - INEP/MEC</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                         </article>
+                        </section>
+
+                        <section class="box-bevelw tr">
+                            <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
+                            <p>Infraestrutura (Equipamentos)</p><span id="about-this"></span>
+                            <article>
+                            <div class="datagrid">
+                                <table>
+                                    <tbody>
+                                        <tr class="alt">
+                                            <td>Aparelho    de Televisão</td>
+                                            <td>{% if dados.id_equip_tv %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Aparelho de    DVD</td>
+                                            <td>{% if dados.id_equip_dvd %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td>Copiadora</td>
+                                            <td>{% if dados.id_equip_copiadora %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Impressora</td>
+                                            <td>{% if dados.id_equip_impressora %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td>Datashow</td>
+                                            <td>{% if dados.id_equip_multimidia %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Equipamento de som</td>
+                                            <td>{% if dados.id_equip_som %}<img src="/static/img/yes.png" alt="" />{% else %}<img src="/static/img/no.png" alt="" />{% endif %}</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td>Máquina    fotográfica/filmadora</td>
+                                            <td>{% if dados.id_equip_foto %}<img src="/static/img/yes.png">{% else %}<img src="/static/img/no.png">{% endif %}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">Fonte: Censo Escolar da Educação Básica 2012 - INEP/MEC</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                         </article>
+                        </section>
+
+                                                <section class="box-bevelw tr">
+                            <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
+                            <p>Computadores e Internet</p><span id="about-this"></span>
+                            <article>
+                            <div class="datagrid">
+                                <table>
+                                    <tbody>
+                                        <tr class="alt">
+                                            <td >Internet</td>
+                                            <td>{% if dados.id_internet %}<img src="/static/img/yes.png" alt="" />{% else %}<img src="/static/img/no.png" alt="" />{% endif %}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Banda larga</td>
+                                            <td>{% if dados.id_banda_larga %}<img src="/static/img/yes.png" alt="" />{% else %}<img src="/static/img/no.png" alt="" />{% endif %}</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td>Computadores    para uso dos alunos</td>
+                                            <td>{{ dados.num_comp_alunos }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Computadores    para uso administrativo</td>
+                                            <td>{{ dados.num_salas_utilizadas }}</td>
+                                        </tr>
+                                        <tr class="alt">
+                                        <td colspan="2">Fonte: Censo Escolar da Educação Básica 2012 - INEP/MEC</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                         </article>
+                        </section>
+                    <!--Conteudo-->
+                </div><!--span6 coluna2-->
+            </div><!--tab-pane / panel-mural-->
+<!-- TAB ESCOLA -->
+
+<!-- TAB MURAL -->
+                <div class="tab-pane" id="painel-mural">
+                        <section>
+                            <img src="/static/img/embreve_mural.png" alt="" style="max-width: 920px; margin-left: 20px; margin-bottom: 20px;">
+                        </section>
+                </div><!--tab-pane / panel-escola-->
+<!-- TAB MURAL -->
+
+<!-- TAB USUÁRIOS -->
+                  <div class="tab-pane" id="painel-usuarios">
+                    <section>
+                        <img src="/static/img/emdes_usuarios_pagu.png" alt="" style="max-width: 920px; margin-left: 20px; margin-bottom: 20px;">
+                    </section>
+                  </div><!--tab-pane / panel-usuario-->
+<!-- TAB USUÁRIOS -->
+
+<!-- TAB INICIATIVAS -->
+                <div class="tab-pane" id="painel-iniciativas">
+                        <section>
+                            <img src="/static/img/embreve_iniciativas.png" alt="" style="max-width: 920px; margin-left: 20px; margin-bottom: 20px;">
+                        </section>
+                </div><!--tab-pane / painel-iniciativas-->
+<!-- TAB INICIATIVAS -->
+
+            </div><!--tab-content-->
+        </section>
+        </div><!--tabbable /tabs-mapas-->
+    </div><!--span12-->
+<!-- FIM TABS -->
+</div><!--row-fluid-->
+
+  <script>
+  init();
+  </script>
+<script type="text/javascript">
+                 // Rendimento pessoas
+                    $(function () {
+                            $('#hc-renda-pessoas').highcharts({
+                                chart: {
+                                    type: 'column',
+                                    spacingLeft: 25,
+                                },
+                                credits: {
+                                    text: 'Fonte: Censo 2010 - IBGE / culturaeduca.cc',
+                                },
+                                title: {
+                                    text: 'Classes de rendimento nominal mensal',
+                                    align: 'left',
+                                    x: 0,
+                                    style: {
+                                        color: '#666',
+                                        fontSize: '14px'
+                                    }
+                                },
+                                subtitle: {
+                                    text: 'População residente de 10 anos ou mais - Sexo',
+                                    align: 'left',
+                                    x: 0,
+                                    style: {
+                                        color: '#999',
+                                    }
+                                },
+                                legend: {
+                                    backgroundColor: '#f2f2f2',
+                                    borderColor: null,
+                                    align: 'right',
+                                    verticalAlign: 'top',
+                                    x:2,
+                                    y: 40,
+                                    floating: true,
+                                    itemStyle: {
+                                        color: '#9e9e9e',
+                                        fontSize: '11px',
+                                    }
+                                },
+                                xAxis: {
+                                    categories: [
+                                        'Sem rendimento',
+                                        'Até 1/2 SM',
+                                        'De 1/2 a 1 SM',
+                                        'De 1 a 2 SM',
+                                        'De 2 a 3 SM',
+                                        'De 3 a 5 SM',
+                                        'De 5 a 10 SM',
+                                        'De 10 a 15 SM',
+                                        'De 15 a 20 SM',
+                                        'Mais de 20 SM'
+                                    ],
+                                    labels: {
+                                        rotation: -65,
+                                        align: 'right',
+                                        style: {
+                                            fontSize: '10px',
+                                        }
+                                    },
+                                },
+                                yAxis: {
+                                    title: {
+                                        text: null
+                                    },
+                                    labels: {
+                                        enabled: false
+                                    },
+                                    tickPixelInterval: 50
+                                },
+                                tooltip: {
+                                    headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                                    pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                                        '<td style="padding:0"><b>{point.y:.1f} </b></td></tr>',
+                                    footerFormat: '</table>',
+                                    shared: true,
+                                    useHTML: true
+                                },
+                                plotOptions: {
+                                    column: {
+                                        pointPadding: 0.1,
+                                        borderWidth: 0
+                                    }
+                                },
+                                series: [{
+                                    name: 'Homens',
+                                    data: [
+                                        {{ renda.h_sem_rendimento }},
+                                        {{ renda.h_ate_meio }},
+                                        {{ renda.h_de_meio_a_1 }},
+                                        {{ renda.h_de_1_a_2 }},
+                                        {{ renda.h_de_2_a_3 }},
+                                        {{ renda.h_de_3_a_5 }},
+                                        {{ renda.h_de_5_a_10 }},
+                                        {{ renda.h_de_10_a_15 }},
+                                        {{ renda.h_de_15_a_20 }},
+                                        {{ renda.h_mais_de_20 }}
+                                        ],
+                                    color: '#99cccc'
+
+                                }, {
+                                    name: 'Mulheres',
+                                    data: [
+                                        {{ renda.m_sem_rendimento }},
+                                        {{ renda.m_ate_meio }},
+                                        {{ renda.m_de_meio_a_1 }},
+                                        {{ renda.m_de_1_a_2 }},
+                                        {{ renda.m_de_2_a_3 }},
+                                        {{ renda.m_de_3_a_5 }},
+                                        {{ renda.m_de_5_a_10 }},
+                                        {{ renda.m_de_10_a_15 }},
+                                        {{ renda.m_de_15_a_20 }},
+                                        {{ renda.m_mais_de_20 }}
+                                        ],
+                                    color: '#ffcc33'
+
+                                }],
+
+                                exporting: {
+                                    filename: 'rendimento-mensal',
+                                }
+
+                            });
+                    });
+
+                    // Rendimento domiciliar
+
+                    $(function () {
+                            $('#hc-renda-domicilios').highcharts({
+                                chart: {
+                                    type: 'bar',
+                                },
+                                credits: {
+                                    text: 'Fonte: Censo 2010 - IBGE / culturaeduca.cc',
+                                },
+                                title: {
+                                    text: 'Classes de rendimento nominal mensal domiciliar',
+                                    align: 'left',
+                                    x: 0,
+                                    style: {
+                                        color: '#666',
+                                        fontSize: '14px'
+                                    }
+                                },
+                                subtitle: {
+                                    text: 'Domicílios particulares permanentes',
+                                    align: 'left',
+                                    x: 0,
+                                    style: {
+                                        color: '#999',
+                                    }
+                                },
+                                xAxis: {
+                                    categories: [
+                                        'Sem rendimento',
+                                        'Até 1/2 SM',
+                                        'De 1/2 a 1 SM',
+                                        'De 1 a 2 SM',
+                                        'De 2 a 3 SM',
+                                        'De 3 a 5 SM',
+                                        'De 5 a 10 SM',
+                                        'De 10 a 15 SM'
+                                    ],
+                                    title: {
+                                        text: null
+                                    },
+                                    labels: {
+                                        align: 'right',
+                                    },
+                                },
+                                yAxis: {
+                                    min: 0,
+                                    title: {
+                                        text: null
+                                    },
+                                    labels: {
+                                        enabled: false
+                                    },
+                                },
+                                legend: {
+                                    enabled: false
+                                },
+                                series: [{
+                                    name: 'Domicílios',
+                                    data: [
+                                        {{ renda.dom_sem_rendimento }},
+                                        {{ renda.dom_ate_meio }},
+                                        {{ renda.dom_de_meio_a_1 }},
+                                        {{ renda.dom_de_1_a_2 }},
+                                        {{ renda.dom_de_2_a_3 }},
+                                        {{ renda.dom_de_3_a_5 }},
+                                        {{ renda.dom_de_5_a_10 }},
+                                        {{ renda.dom_de_10_a_15 }}
+                                        ],
+                                    color: '#669966'
+                                }],
+                                exporting: {
+                                    filename: 'rendimento-domiciliar',
+                                }
+                            });
+                        });
+
+                    // Piramide Etária
+
+
+                    $(function () {
+                        var chart,
+                            categories = ['0-4', '5-9', '10-14', '15-19',
+                                '20-24', '25-29', '30-34', '35-39', '40-44',
+                                '45-49', '50-54', '55-59', '60-64', '65-69',
+                                '70-74', '75-79', '80-84', '85-89', '90-94',
+                                '95-99', '100 +'];
+                        $(document).ready(function() {
+                            $('#hc-piramide-etaria').highcharts({
+                                chart: {
+                                    type: 'bar',
+                                },
+                                credits: {
+                                    text: 'Fonte: Censo 2010 - IBGE / culturaeduca.cc',
+                                },
+                                title: {
+                                    text: 'Piramide Etária - População residente',
+                                    align: 'left',
+                                    x: 0,
+                                    style: {
+                                        color: '#666',
+                                        fontSize: '14px'
+                                    }
+                                },
+                                legend: {
+                                    borderColor: null,
+                                    x:30,
+                                    itemDistance: 130,
+                                    itemStyle: {
+                                        color: '#9e9e9e',
+                                        fontSize: '11px',
+                                    }
+                                },
+                                xAxis: [{
+                                    categories: categories,
+                                    reversed: false
+                                },
+                                //{ // mirror axis on right side
+                                //    opposite: true,
+                                //    reversed: false,
+                                //    categories: categories,
+                                //    linkedTo: 0
+                                //}
+                                ],
+                                yAxis: {
+                                    title: {
+                                        text: null
+                                    },
+                                    labels: {
+                                        formatter: function(){
+                                            return (Math.abs(this.value) );
+                                        }
+                                    },
+                                },
+
+                                plotOptions: {
+                                    series: {
+                                        stacking: 'normal'
+                                    }
+                                },
+
+                                tooltip: {
+                                    formatter: function(){
+                                        return '<b>'+ this.series.name +', '+ this.point.category +' anos </b><br/>'+
+                                            'População: '+ Highcharts.numberFormat(Math.abs(this.point.y), 0);
+                                    }
+                                },
+
+                                series: [{
+                                    name: 'Homens',
+                                    data: [
+                                        -{{ piramide.h_0_4 }},
+                                        -{{ piramide.h_5_9 }},
+                                        -{{ piramide.h_10_14 }},
+                                        -{{ piramide.h_15_19 }},
+                                        -{{ piramide.h_20_24 }},
+                                        -{{ piramide.h_25_29 }},
+                                        -{{ piramide.h_30_34 }},
+                                        -{{ piramide.h_35_39 }},
+                                        -{{ piramide.h_40_44 }},
+                                        -{{ piramide.h_45_49 }},
+                                        -{{ piramide.h_50_54 }},
+                                        -{{ piramide.h_55_59 }},
+                                        -{{ piramide.h_60_64 }},
+                                        -{{ piramide.h_65_69 }},
+                                        -{{ piramide.h_70_74 }},
+                                        -{{ piramide.h_75_79 }},
+                                        -{{ piramide.h_80_84 }},
+                                        -{{ piramide.h_85_89 }},
+                                        -{{ piramide.h_90_94 }},
+                                        -{{ piramide.h_95_99 }},
+                                        -{{ piramide.h_100_mais }}
+                                        ],
+                                    color: '#99cccc'
+
+                                }, {
+                                    name: 'Mulheres',
+                                    data: [
+                                        {{ piramide.m_0_4 }},
+                                        {{ piramide.m_5_9 }},
+                                        {{ piramide.m_10_14 }},
+                                        {{ piramide.m_15_19 }},
+                                        {{ piramide.m_20_24 }},
+                                        {{ piramide.m_25_29 }},
+                                        {{ piramide.m_30_34 }},
+                                        {{ piramide.m_35_39 }},
+                                        {{ piramide.m_40_44 }},
+                                        {{ piramide.m_45_49 }},
+                                        {{ piramide.m_50_54 }},
+                                        {{ piramide.m_55_59 }},
+                                        {{ piramide.m_60_64 }},
+                                        {{ piramide.m_65_69 }},
+                                        {{ piramide.m_70_74 }},
+                                        {{ piramide.m_75_79 }},
+                                        {{ piramide.m_80_84 }},
+                                        {{ piramide.m_85_89 }},
+                                        {{ piramide.m_90_94 }},
+                                        {{ piramide.m_95_99 }},
+                                        {{ piramide.m_100_mais }}
+                                        ],
+                                    color: '#ffcc33'
+
+                                }],
+
+                                exporting: {
+                                    filename: 'piramide-etaria',
+                                }
+
+                            });
+
+                        });
+
+                    });
+
+                    // População Residente - Raça/Cor
+
+                    $(function () {
+                        var chart;
+
+                        $(document).ready(function () {
+
+                            // Build the chart
+                            $('#hc-populacao-cor').highcharts({
+                                chart: {
+                                    marginLeft: 70
+                                },
+                                credits: {
+                                    text: 'Fonte: Censo 2010 - IBGE / culturaeduca.cc',
+                                },
+                                title: {
+                                    text: 'Raça/Cor - População Residente',
+                                    align: 'left',
+                                    x: 0,
+                                    style: {
+                                        color: '#666',
+                                        fontSize: '14px'
+                                    }
+                                },
+                                tooltip: {
+                                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                                },
+                                plotOptions: {
+                                    pie: {
+                                        allowPointSelect: true,
+                                        cursor: 'pointer',
+                                        dataLabels: {
+                                            enabled: false
+                                        },
+                                        showInLegend: true
+                                    }
+                                },
+                                legend: {
+                                    backgroundColor: '#f2f2f2',
+                                    borderColor: null,
+                                    layout: 'vertical',
+                                    align: 'left',
+                                    verticalAlign: 'middle',
+                                    floating: true,
+                                    itemStyle: {
+                                        color: '#9e9e9e',
+                                        fontSize: '11px',
+                                    }
+                                },
+
+                                series: [{
+                                    type: 'pie',
+                                    name: '',
+                                    data: [
+                                        ['Branca',   {{ raca.branca }}],
+                                        ['Preta',    {{ raca.preta }}],
+                                        ['Amarela',  {{ raca.amarela }}],
+                                        ['Parda',    {{ raca.parda }}],
+                                        ['Indígena', {{ raca.indigena }}]
+                                    ],
+                                    colors: [
+                                        '#99cccc',
+                                        '#8f85ba',
+                                        '#edc13e',
+                                        '#7f7a66',
+                                        '#54ae66'
+                                    ],
+                                }],
+
+                                exporting: {
+                                    filename: 'raca-cor',
+
+                                }
+
+                            });
+                        });
+
+                    });
+              </script>
+
+    
+
+
+   {% endblock %}

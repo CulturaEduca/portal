@@ -1,0 +1,32 @@
+{% extends 'bootstrap.html' %}
+{% block title%}Encontre um Território Educativo - Cultura Educa{% endblock %}
+{% block conteudo %}
+<div class="bevel tr table-busca-escola">
+    <img  class="pull-right trimg" src="/static/img/tri-laranjaw.png" alt="detalhe triangulo">
+    {% if quantidade %}
+        {{ quantidade }} escola{{ quantidade|pluralize }} encontrada{{ quantidade|pluralize }}.
+    {% else %}
+        Nenhuma escola encontrada.
+    {% endif %}
+
+    {% if quantidade %}
+    <table class="table-striped table-condensed">
+        <tr>
+            <th>Escola</th>
+            <th>Bairro</th>
+            <th>Município</th>
+            <th>UF</th>
+        </tr>
+        {% for e in escolas %}
+        <tr>
+            <td><a href="{% url 'territorio_detalhe' e.codigo_inep %}">{{ e.nome }}</a></td>
+            <td>{{ e.bairro }}</td>
+            <td>{{ e.ibge.nome }}</td>
+            <td>{{ e.ibge.estado }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+</div><!--bevel tr-->
+
+{% endblock %}

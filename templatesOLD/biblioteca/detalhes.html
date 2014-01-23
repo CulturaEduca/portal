@@ -1,0 +1,270 @@
+{% extends 'bootstrap.html' %}
+{% block title %}{{ biblioteca.nome|title }} - Cultura Educa{% endblock %}
+{% block conteudo %}
+<script src="/static/js/ol/OpenLayers.js"></script>
+<script src="/static/js/ponto.js"></script>
+<script src="/static/js/highcharts/highcharts.js"></script>
+<script src="/static/js/highcharts/modules/exporting.js"></script>
+<script type="text/javascript">
+$(function() {
+    $(".about-this-pop").popover();
+    $(".about-this-tip").tooltip();
+});
+</script>
+<div class="row-fluid clearfix">
+    <div class="row-fluid span12 breadcrumb-mapa">
+        <p><a href="{% url 'mapa' %}">MAPA</a> > <a href="{% url 'mapa' %}">{{ biblioteca.ibge.estado.sigla }}</a> > <a href="/mapa/{{ biblioteca.ibge.estado.sigla }}/{{ biblioteca.ibge.nome|slugify }}/">{{ biblioteca.ibge.nome }}</a> > Biblioteca</p>
+        <span style="visibility:hidden;display:none" id='longitude_centro'>{{ longitude }}</span>
+        <span style="visibility:hidden;display:none" id='latitude_centro'>{{ latitude }}</span>
+        <span style="visibility:hidden;display:none" id='icone'>{{ icone }}</span>
+        <span style="visibility:hidden;display:none" id='nome_ponto'>{{ nome_ponto }}</span>
+        <div class="row-fluid span12" id="mapa" style="max-width:960px; height:500px;"></div>
+    </div><!--breadcrumb-->
+</div>
+<div class="row-fluid">
+    <div class="span12">
+        <div class="tabbable" id="tabs-mapas">
+        <p>{{ biblioteca.nome }}</p>
+        <ul class="nav nav-tabs">
+          <li class="active">
+            <a href="#painel-perfil" data-toggle="tab">PERFIL</a>
+            <span class="tripod"></span>
+          </li>
+        </ul>
+        <section class="tabs-conteudo row-fluid">
+            <div class="tab-content span12">
+<!-- TAB PERFIL -->
+                <div class="tab-pane active" id="painel-perfil">
+                    <div class="span6 coluna1">
+                    <!--Conteudo-->
+
+                            <section class="box-bevelw tr geral">
+                            <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
+                            <p>Identificação</p>
+                            <span><!--PopOver-->
+                                <a 
+                                    class="about-this-pop"
+                                    data-toggle="popover"
+                                    data-animation="true"
+                                    data-placement="right"
+                                    data-trigger="click"
+                                    data-title="Texto de Ajuda Titulo"
+                                    data-content="Conteudo da Ajuda">
+                                    <img src="/static/img/info.png" alt="Ajuda">
+                                </a>
+                            </span><!--PopOver-->
+                            <article>
+                            <div class="datagrid geral tdw">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td>Nome</td>
+                                            <td>{{ biblioteca.nome }} </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Endereço</td>
+                                            <td>{{ biblioteca.nome_logra }}, {{ biblioteca.num }} </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Bairro</td>
+                                            <td>{{ biblioteca.bairro }} </td>
+                                        </tr>
+                                        <tr>
+                                            <td>CEP</td>
+                                            <td>{{ biblioteca.cep }} </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Telefone</td>
+                                            <td>( {{ biblioteca.ddd_telefo }} ) {{ biblioteca.telefone }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Email/site</td>
+                                            <td>{{ biblioteca.email }} / {{ biblioteca.site }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>CNPJ</td>
+                                            <td>Definir models</td>
+                                        </tr>
+                                        <tr class="hidden"></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                         </article>
+                        </section>
+<!---->
+                        <section class="box-bevelw tr">
+                            <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
+                            <p>Gestão</p>
+                            <article>
+                                <div class="datagrid">
+                                    <table>
+                                        <tr class="alt">
+                                            <td>Esfera Administrativa</td>
+                                            <td>{{ biblioteca.esfera_adm }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tipo de Esfera</td>
+                                            <td>Definir models</td>
+                                        </tr>
+                                        <tr class="hidden">
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </article>
+                        </section>
+
+                        <section class="box-bevelw tr">
+                            <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
+                            <p>Funcionamento</p>
+                            <article>
+                                <div class="datagrid">
+                                    <table>
+                                        <tr class="alt">
+                                            <td>Segunda-feira</td>
+                                            <td><img src="/static/img/positivo.png" alt="Aberto neste dia da semana"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Terça-feira</td>
+                                            <td><img src="/static/img/positivo.png" alt="Aberto neste dia da semana"></td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td>Quarta-feira</td>
+                                            <td><img src="/static/img/positivo.png" alt="Aberto neste dia da semana"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Quinta-feira</td>
+                                            <td><img src="/static/img/positivo.png" alt="Aberto neste dia da semana"></td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td>Sexta-feira</td>
+                                            <td><img src="/static/img/positivo.png" alt="Aberto neste dia da semana"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Sábado</td>
+                                            <td><img src="/static/img/negativo.png" alt="Aberto neste dia da semana"></td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td>Domingo</td>
+                                            <td><img src="/static/img/negativo.png" alt="Fechado neste dia da semana"></td>
+                                        </tr>
+                                        <tr class="hidden">
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </article>
+                        </section>
+
+                    </div><!--span6 coluna1-->
+<!-- COLUNA 2 -->                        
+                    <div class="span6 coluna2">
+
+                        <section class="box-bevelw tr">
+                            <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
+                            <p>Localização</p>
+                            <span><!--Tooltip-->
+                                <a 
+                                    class="about-this-tip"
+                                    data-toggle="tooltip"
+                                    data-animation="true"
+                                    data-placement="right"
+                                    data-trigger="click"
+                                    data-title="Texto de Ajuda Titulo"
+                                    data-content="Conteudo da Ajuda">
+                                    <img src="/static/img/info.png" alt="Ajuda">
+                                </a>
+                            </span><!--Tooltip-->
+                            <article>
+                                <div class="datagrid">
+                                    <table>
+                                        <tr class="alt">
+                                            <td>Latitude</td>
+                                            <td>{{ biblioteca.latitude }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Longitude</td>
+                                            <td>{{ biblioteca.longitude }}</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td>Tipo GEO</td>
+                                            <td>{{ biblioteca.tipogeo }}</td>
+                                        </tr>
+                                         <tr class="hidden">
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </article>
+                        </section>
+
+                        <section class="box-bevelw tr">
+                            <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
+                            <p>Taxonomia SNIIC</p>
+                            <article>
+                                <div class="datagrid">
+                                    <table>
+                                        <tr class="alt">
+                                            <td>Nivel 1</td>
+                                            <td>{{ biblioteca.sniic_n1 }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Nivel 2</td>
+                                            <td>{{ biblioteca.sniic_n2 }}</td>
+                                        </tr>
+                                        <tr class="alt">
+                                            <td>Nivel 3</td>
+                                            <td>{{ biblioteca.sniic_n3 }}</td>
+                                        </tr>
+                                        <tr class="hidden">
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </article>
+                        </section>
+
+                        <section class="box-bevelw tr">
+                            <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
+                            <p>Acervo</p>
+                            <article>
+                                <div class="datagrid">
+                                    <table>
+                                        <tr class="alt">
+                                            <td>Número de Livros</td>
+                                            <td>{{ biblioteca.acervo_liv }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Quantidade de Empréstimos</td>
+                                            <td>{{ biblioteca.qt_emprest }}</td>
+                                        </tr>
+                                        <tr class="hidden">
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </article>
+                        </section>
+
+                    </div><!--span6 coluna2-->
+                    
+            </div><!--tab-pane / painel-perfil-->
+
+<!-- /TAB PERFIL -->
+
+            </div><!--tab-content-->
+        </section>
+        </div><!--tabbable /tabs-mapas-->
+    </div><!--span12-->
+<!-- FIM TABS -->
+</div><!--row-fluid-->
+
+<script>
+    init();
+</script>
+{% endblock %}

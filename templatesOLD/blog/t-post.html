@@ -1,0 +1,27 @@
+<h1>{{ post.titulo }}</h1>
+<small>{{ post.data_publicacao }}</small>
+<p>{{ post.conteudo|safe }}</p>
+<hr>
+<h3>Mais lidos</h3>
+{% for ml in mais_lidos %}
+    <a href="{% url 'post' ml.slug %}">{{ ml.titulo }}</a> - {{ ml.resumo }}<br>
+{% endfor %}
+<hr>
+
+<h3>{% if comentarios %}Comentários{% else %}Nenhum comentário{% endif %}</h3>
+{% if comentarios %}
+    {% for comentario in comentarios %}
+        {{ comentario.comentario }} - {{ comentario.nome }} - {{ comentario.data_hora }}<br >
+    {% endfor %}
+{% endif %}
+
+<h3>Comentar</h3>
+<form class="form-comentar" method="post" action="{% url 'post' post.slug %}">
+              <fieldset>
+                <legend>COMENTAR</legend>
+                <label {% if form.nome.errors %}class = "erro"{% endif %}>Nome</label>{{ form.nome }} {{ form.nome.errors }}
+                <label>E-mail</label>{{ form.email }} {{ form.email.errors }}
+                <textarea placeholder="Seu Comentário" rows="2" name="comentario"></textarea> {{ form.comentario.errors }}
+                <button type="submit" class="btn-verde pull-right">Publicar</button>
+              </fieldset>
+            </form>

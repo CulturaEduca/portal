@@ -1,0 +1,52 @@
+{% for post in posts %}
+    <h1>{{ post.titulo }}</h1>
+    <small>{{ post.data_publicacao }}</small><br />
+
+    <!-- Imagem -->
+    {% if post.imagem_destaque %}
+        <img src="/static/media/{{ post.imagem_destaque }}">
+    {% else  %}
+        <img src="/static/img/{% cycle 'thumbs1.jpg' 'thumbs2.jpg' 'thumbs3.jpg' %}" />
+    {% endif %}
+    <!-- Verifica se tem o resumo -->
+    {% if post.resumo %}
+        <p>{{ post.resumo }}</p>
+    {% else %}
+    <!-- Se nao tiver o resumo, publica as 20 primeiras palavras -->
+        <p>{{ post.conteudo|truncatewords:20|safe }}</p>
+    {% endif %}
+
+    <!-- Contador de comentarios -->
+    {% if post.comentarios %}
+        {{ post.comentarios }} comentário{{ post.comentarios|pluralize }}
+    {% else %}
+        Nenhum comentário
+    {% endif %}
+
+    <!-- Link leia mais -->
+    <a href="{% url 'post' post.slug %}" />Leia mais</a>
+    <hr>
+{% endfor %}
+
+
+<!-- Paginacao -->
+<!-- Verifica se tem pagina anterior, se tiver, habilita link anterior -->
+{% if has_previous %}
+    <a href="/blog/{{ previous }}/">Anterior</a>
+{% else %}
+    Anterior
+{% endif %}
+
+<hr>
+<!-- Lista os posts mais lidos -->
+<h3>Mais lidos</h3>
+{% for ml in mais_lidos %}
+    <a href="{% url 'post' ml.slug %}">{{ ml.titulo }}</a> - {{ ml.resumo }}<br>
+{% endfor %}
+<hr>
+<!-- Verifica sem tem proxima pagina, se tiver, habilita o link proximo -->
+{% if has_next %}
+    <a href="/blog/{{ next }}/">Próxima</a>
+{% else %}
+    Próxima
+{% endif %}
