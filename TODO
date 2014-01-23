@@ -1,5 +1,0 @@
-Apos adicionar o slug nas tags, rodar o seguinte comando no banco:
-
-alter table blog_tag add slug varchar(255);
-
-Para popular os campos das tags, entrar no admin, clicar em cada uma das tags e clicar no botao salvar, sem modificar nada. O salvar dispara um trigger para popular o campo slug corretamente.

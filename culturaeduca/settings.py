@@ -11,7 +11,7 @@ DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    ('Christiano Anderson', 'anderson@nodeware.com.br'),
+    ('Christiano Anderson', 'canderson@riseup.net'),
 )
 
 MANAGERS = ADMINS
