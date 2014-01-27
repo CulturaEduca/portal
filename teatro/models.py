@@ -4,16 +4,8 @@ from __future__ import unicode_literals
 from django.contrib.gis import admin
 from django.contrib.gis.db import models
 from ibge.models import Municipio
+from territorio.models import TipoGeo
 
-
-class TipoGeo(models.Model):
-    '''Referencias do tipo Geo'''
-
-    id = models.IntegerField('Cod TipoGEO', primary_key=True)
-    nome = models.CharField('TipoGeo', null=True, blank=True, max_length=20)
-
-    def __unicode__(self):
-        return str(self.id)
 
 class EsferaAdministrativa(models.Model):
     '''Esfera Administrativa'''

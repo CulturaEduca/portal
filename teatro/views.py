@@ -66,6 +66,7 @@ def detalhes(request, codigo):
 
     from teatro.models import Teatro
     from sniic.models import Tipologia
+    from territorio.models import TipoGeo
 
     teatro = Teatro.objects.get(id = int(codigo))
 
