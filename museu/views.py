@@ -67,8 +67,30 @@ def detalhes(request, codigo):
     '''Tela de detalhe dos Museus'''
 
     from museu.models import Museu
+    from sniic.models import Tipologia
 
     museu = Museu.objects.get(id = int(codigo))
+
+    s1 = museu.sniic_n1
+    if not '.' in s1:
+        s1 = s1 + '.'
+    s2 = museu.sniic_n2
+    s3 = museu.sniic_n3
+
+    try:
+        sniic1 = Tipologia.objects.get(codigo = s1)
+    except:
+        sniic1 = False
+    try:
+        sniic2 = Tipologia.objects.get(codigo = s2)
+    except:
+        sniic2 = False
+    try:
+        sniic3 = Tipologia.objects.get(codigo = s3)
+    except:
+        sniic3 = False
+
+
 
     longitude = str(museu.geom.x).replace(',','.')
     latitude = str(museu.geom.y).replace(',','.')
@@ -78,5 +100,8 @@ def detalhes(request, codigo):
         'icone': icone,
         'latitude': latitude,
         'longitude': longitude,
-        'nome_ponto': 'Museu'
+        'nome_ponto': 'Museu',
+        'sniic1': sniic1,
+        'sniic2': sniic2,
+        'sniic3': sniic3,
         })
