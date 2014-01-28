@@ -157,7 +157,6 @@ class BibliotecaAdmin(admin.ModelAdmin):
     # raw_id_fields = ('ibge',)
 
 #admin.site.register(Biblioteca)
-admin.site.register(TipoGeo)
 admin.site.register(TipoEsfera)
 admin.site.register(EsferaAdministrativa)
 admin.site.register(DiaFuncionamento)
