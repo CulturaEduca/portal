@@ -81,4 +81,3 @@ class TeatroAdmin(admin.ModelAdmin):
     raw_id_fields = ('ibge',)
 
 admin.site.register(Teatro,TeatroAdmin)
-admin.site.register(TipoGeo)
