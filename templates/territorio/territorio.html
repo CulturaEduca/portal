@@ -344,7 +344,7 @@
                     <!--Conteudo-->
                         <section class="box-bevelw tr mr-20">
                             <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
-                            <p>{% if pontos_cultura %}{{ pontos_cultura.count }}{% endif %} Pontos de Cultura</p><span id="about-this"></span>
+                            <p>{% if pontos_cultura %}{{ pontos_cultura|length }}{% endif %} Ponto{{ pontos_cultura|pluralize }} de Cultura</p><span id="about-this"></span>
                             <article>
                             <div class="datagrid">
                                 <table>
@@ -371,7 +371,7 @@
 
                         <section class="box-bevelw tr mr-20">
                             <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
-                            <p>{% if bibliotecas.count %}{{ bibliotecas.count }}{% endif %} Bibliotecas</p><span id="about-this"></span>
+                            <p>{% if bibliotecas %}{{ bibliotecas|length }}{% endif %} Biblioteca{{ bibliotecas|pluralize }}</p><span id="about-this"></span>
                             <article>
                             <div class="datagrid">
                                 <table>
@@ -383,7 +383,7 @@
                                         {% for biblioteca in bibliotecas %}
                                         <tr {% cycle '' 'class="alt"' %}>
                                             <td><a href="/biblioteca/{{ biblioteca.id }}/">{{ biblioteca.nome }}</a>  - {{ biblioteca.tipo_logradouro|title }} {{ biblioteca.nome_logradouro|title }}, {{ biblioteca.numero_logradouro }}</td>
-                                            <td></td>
+                                            <td>{{ biblioteca.distancia|floatformat:2 }} metros</td>
                                         </tr>
                                         {% endfor %}
                                         <tr class="hidden">
@@ -398,7 +398,7 @@
                        
                         <section class="box-bevelw tr mr-20">
                             <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
-                            <p>{% if cinemas %}{{ cinemas.count }}{% endif %} Cinemas</p><span id="about-this"></span>
+                            <p>{% if cinemas %}{{ cinemas|length }}{% endif %} Cinema{{ cinemas|pluralize }}</p><span id="about-this"></span>
                             <article>
                             <div class="datagrid">
                                 <table>
@@ -411,7 +411,7 @@
                                         {% if cinema.nome %}
                                         <tr {% cycle '' 'class="alt"' %}>
                                             <td><a href="/cinema/{{ cinema.id }}/">{{ cinema.nome }}</a>  - {{ cinema.tipo_logradouro|title }} {{ cinema.nome_logradouro|title }}, {{ cinema.numero_logradouro }}</td>
-                                            <td></td>
+                                            <td>{{ cinema.distancia|floatformat:2 }} metros</td>
                                         </tr>
                                         {% endif %}
                                         {% endfor %}
@@ -427,7 +427,7 @@
 
                         <section class="box-bevelw tr mr-20">
                             <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
-                            <p>{% if museus %}{{ museus.count }}{% endif %} Museus</p><span id="about-this"></span>
+                            <p>{% if museus %}{{ museus|length }}{% endif %} Museu{{ museus|pluralize }}</p><span id="about-this"></span>
                             <article>
                             <div class="datagrid">
                                 <table>
@@ -439,7 +439,7 @@
                                         {% for museu in museus %}
                                         <tr {% cycle '' 'class="alt"' %}>
                                             <td><a href="/museu/{{ museu.id }}/">{{ museu.nome }}</a> - {{ museu.tipo_logradouro|title }} {{ museu.nome_logradouro|title }}, {{ museu.numero_logradouro }}</td>
-                                            <td></td>
+                                            <td>{{ museu.distancia|floatformat:2 }} metros</td>
                                         </tr>
                                         {% endfor %}
                                         <tr class="hidden">
@@ -455,7 +455,7 @@
                         
                         <section class="box-bevelw tr mr-20">
                             <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
-                            <p>{% if teatros %}{{ teatros.count }}{% endif %} Teatros</p><span id="about-this"></span>
+                            <p>{% if teatros %}{{ teatros|length }}{% endif %} Teatros</p><span id="about-this"></span>
                             <article>
                             <div class="datagrid">
                                 <table>
@@ -468,7 +468,7 @@
                                         {% if teatro.nome %}
                                         <tr {% cycle '' 'class="alt"' %}>
                                             <td><a href="/teatro/{{ teatro.id }}/">{{ teatro.nome }}</a> - {{ teatro.tipo_logradouro|title }} {{ teatro.nome_logradouro|title }}, {{ teatro.numero_logradouro }} </td>
-                                            <td></td>
+                                            <td>{{ teatro.distancia|floatformat:2 }} metros</td>
                                         </tr>
                                         {% endif %}
                                         {% endfor %}
@@ -488,7 +488,7 @@
                         
                         <section class="box-bevelw tr mr-20">
                             <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
-                            <p>{% if centros_ciencia %}{{ centros_ciencia.count }}{% endif %} Centros de Ciência</p><span id="about-this"></span>
+                            <p>{% if centros_ciencia %}{{ centros_ciencia|length }}{% endif %} Centro{{ centros_ciencia|pluralize }} de Ciência</p><span id="about-this"></span>
                             <article>
                             <div class="datagrid">
                                 <table>
@@ -500,7 +500,7 @@
                                         {% for cc in centros_ciencia %}
                                         <tr {% cycle '' 'class="alt"' %}>
                                             <td><a href="/centro_ciencia/{{ cc.id }}" />{{ cc.nome }}</a> - {{ cc.tipo_logradouro|title }} {{ cc.nome_logradouro|title }}, {{ cc.numero_logradouro }}</td>
-                                            <td></td>
+                                            <td>{{ cc.distancia|floatformat:2 }} metros</td>
                                         </tr>
                                         {% endfor %}
                                         <tr class="hidden">
@@ -516,7 +516,7 @@
 
                         <section class="box-bevelw tr mr-20">
                             <img class="pull-right trimgt" src="/static/img/tri-laranjam.png" alt="detalhe triangulo">
-                            <p>{% if salas_verdes %}{{ salas_verdes.count }}{% endif %} Salas Verdes</p><span id="about-this"></span>
+                            <p>{% if salas_verdes %}{{ salas_verdes|length }}{% endif %} Sala{{ salas_verde|pluralize }} Verde{{ salas_verde|pluralize }}</p><span id="about-this"></span>
                             <article>
                             <div class="datagrid">
                                 <table>
@@ -527,8 +527,8 @@
                                         </tr>
                                         {% for sala_verde in salas_verdes %}
                                         <tr {% cycle '' 'class="alt"' %}>
-                                            <td><a href="/sala_verde/{{ sala_verde.id }}/">{{ sala_verde.nome }}</a> - {{ sala_verde.tipo_logradouro|title }} {{ sala_verde.nome_logradouro|title }}, {{ sala_verde.numero_logradouro }}</td>
-                                            <td></td>
+                                            <td><a href="/sala_verde/{{ sala_verde.id }}/">{{ sala_verde.nome }}</a> - {{ sala_verde.tipo_logradouro|title }} {{ sala_verde.endereco|title }}, {{ sala_verde.numero_logradouro }}</td>
+                                            <td>{{ sala_verde.distancia|floatformat:2 }} metros</td>
                                         </tr>
                                         {% endfor %}
                                         <tr class="hidden">
@@ -581,7 +581,7 @@
                                         </tr>
                                         {% for saude in equipamentos_saude %}
                                         <tr {% cycle '' 'class="alt"' %}>
-                                            <td><a href="/saude/{{ saude.id }}/">{{ saude.nome }}</a> - {{ saude.tipo_logra|title }} {{ saude.nome_logra|title }}, {{ saude.num_lograd }}</td>
+                                            <td><a href="/saude/{{ saude.id }}/">{{ saude.nome }}</a> - {{ saude.tipo_logradouro|title }} {{ saude.nome_logradouro|title }}, {{ saude.numero_logradouro }}</td>
                                             <td></td>
                                         </tr>
                                         {% endfor %}

@@ -44,6 +44,8 @@ def detalhe(request, codigo_inep):
 	escola = Escola.objects.get(codigo_inep = codigo_inep)
 	dados_escolas = DadosEscolas.objects.get(cod_inep = codigo_inep)
 
+	ll_e = (escola.longitude, escola.latitude)
+
 	latitude = str(escola.latitude).replace(',','.')
 	longitude = str(escola.longitude).replace(',','.')
 
@@ -619,38 +621,106 @@ def detalhe(request, codigo_inep):
 
 	# Pega os equipamentos de saude
 	from saude.models import Saude
+
+	equipamentos_saude = []
+	
 	try: 
-		equipamentos_saude = Saude.objects.filter(geom__distance_lte = (escola.latlong, distancia_raio))
+		for p in Saude.objects.filter(geom__distance_lte = (escola.latlong, distancia_raio)):
+			ll_p = (p.longitude, p.latitude)
+			distancia = geopy_distance(ll_e, ll_p).meters
+			equipamentos_saude.append({
+				'nome': p.nome,
+				'tipo_logradouro': p.tipo_logra,
+				'nome_logradouro': p.nome_logra,
+				'numero_logradouro': p.num_lograd,
+				'id': p.id,
+				'distancia': distancia,
+				})
 	except:
-		equipamentos_saude = []
+		pass
 
 	# Pega os teatros
 	from teatro.models import Teatro
+
+	teatros = []
+
 	try:
-		teatros = Teatro.objects.filter(geom__distance_lte = (escola.latlong, distancia_raio))
+		for p in Teatro.objects.filter(geom__distance_lte = (escola.latlong, distancia_raio)):
+			ll_p = (p.longitude, p.latitude)
+			distancia = geopy_distance(ll_e, ll_p).meters
+			teatros.append({
+				'nome': p.nome,
+				'tipo_logradouro': p.tipo_logradouro,
+				'nome_logradouro': p.nome_logradouro,
+				'numero_logradouro': p.numero_logradouro,
+				'id': p.id,
+				'distancia': distancia
+				})
 	except:
-		teatros = []
+		pass
 
 	# pega os museus
 	from museu.models import Museu
+
+	museus = []
+
 	try:
-		museus = Museu.objects.filter(geom__distance_lte = (escola.latlong, distancia_raio))
+		for p in Museu.objects.filter(geom__distance_lte = (escola.latlong, distancia_raio)):
+			ll_p = (p.longitude, p.latitude)
+			distancia = geopy_distance(ll_e, ll_p).meters
+			museus.append({
+				'nome': p.nome,
+				'tipo_logradouro': p.tipo_logradouro,
+				'nome_logradouro': p.nome_logradouro,
+				'numero_logradouro': p.numero_logradouro,
+				'id': p.id,
+				'distancia': distancia
+				})
+
 	except:
-		museus = []
+		pass
 
 	# Pega as bibliotecas
 	from biblioteca.models import Biblioteca
+
+	bibliotecas = []
+
 	try:
-		bibliotecas = Biblioteca.objects.filter(geom__distance_lte = (escola.latlong, distancia_raio))
+		for p in Biblioteca.objects.filter(geom__distance_lte = (escola.latlong, distancia_raio)):
+			ll_p = (p.longitude, p.latitude)
+			distancia = geopy_distance(ll_e, ll_p).meters
+			bibliotecas.append({
+				'nome': p.nome,
+				'tipo_logradouro': p.tipo_logradouro,
+				'nome_logradouro': p.nome_logradouro,
+				'numero_logradouro': p.numero_logradouro,
+				'id': p.id,
+				'distancia': distancia
+				})
+
 	except:
-		bibliotecas = []
+		pass
 
 	# Pega os centros de ciencia
 	from centro_ciencia.models import CentroCiencia
+
+	centros_ciencia = []
+
 	try: 
-		centros_ciencia = CentroCiencia.objects.filter(geom__distance_lte = (escola.latlong, distancia_raio))
+		for p in CentroCiencia.objects.filter(geom__distance_lte = (escola.latlong, distancia_raio)):
+			ll_p = (p.longitude, p.latitude)
+			distancia = geopy_distance(ll_e, ll_p).meters
+			centros_ciencia.append({
+				'nome': p.nome,
+				'tipo_logradouro': p.tipo_logradouro,
+				'nome_logradouro': p.nome_logradouro,
+				'numero_logradouro': p.numero_logradouro,
+				'id': p.id,
+				'distancia': distancia
+				})
+
 	except:
-		centros_ciencia = []
+		pass
 
 	# Pega CRAs
 	from cra.models import Cra
@@ -661,30 +731,50 @@ def detalhe(request, codigo_inep):
 
 	# Pega os cinemas
 	from cinema.models import Cinema
+
+	cinemas = []
+
 	try:
-		cinemas = Cinema.objects.filter(geom__distance_lte = (escola.latlong, distancia_raio))
+		for p in Cinema.objects.filter(geom__distance_lte = (escola.latlong, distancia_raio)):
+			ll_p = (p.longitude, p.latitude)
+			distancia = geopy_distance(ll_e, ll_p).meters
+
+			cinemas.append({
+				'nome': p.nome,
+				'tipo_logradouro': p.tipo_logradouro,
+				'nome_logradouro': p.nome_logradouro,
+				'numero_logradouro': p.numero_logradouro,
+				'id': p.id,
+				'distancia': distancia
+				})
 	except:
-		cinemas = []
+		pass
 
 	# Pega as salas verdes
 	from sala_verde.models import SalaVerde
 
+	salas_verdes = []
+
 	try:
-		salas_verdes = SalaVerde.objects.filter(geom__distance_lte = (escola.latlong, distancia_raio))
+		for p in SalaVerde.objects.filter(geom__distance_lte = (escola.latlong, distancia_raio)):
+			ll_p = (p.longitude, p.latitude)
+			distancia = geopy_distance(ll_e, ll_p).meters
+			salas_verdes.append({
+				'nome': p.nome,
+				'endereco': p.nome_logradouro,
+				'id': p.id,
+				'distancia': distancia				
+				})
 	except:
-		salas_verdes = []
+		pass
 
 	# Pega os pontos de cultura
 	from ponto_cultura.models import PontoCultura
 
-
 	pontos_cultura = []
-	pontos = PontoCultura.objects.filter(geom__distance_lte = (escola.latlong, distancia_raio)).distance(escola.latlong).order_by('distance')
 
 	try:
-		for p in pontos:
-
-			ll_e = (escola.longitude, escola.latitude)
+		for p in PontoCultura.objects.filter(geom__distance_lte = (escola.latlong, distancia_raio)).distance(escola.latlong).order_by('distance'):
 			ll_p = (p.longitude, p.latitude)
 			distancia = geopy_distance(ll_e, ll_p).meters
 
@@ -698,7 +788,6 @@ def detalhe(request, codigo_inep):
 				})
 	except:
 		pass
-
 
 
 	# Soma domicilios
