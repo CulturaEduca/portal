@@ -162,3 +162,5 @@ admin.site.register(EsferaAdministrativa)
 admin.site.register(DiaFuncionamento)
 admin.site.register(PeriodoFuncionamento)
 admin.site.register(Biblioteca, BibliotecaAdmin)
+
+# Teste Atom
