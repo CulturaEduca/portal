@@ -65,7 +65,7 @@ def kml_biblioteca_escola(request, codigo_inep):
     return HttpResponse(kml.kml(), mimetype='Content-Type:application/vnd.google-earth.kml+xml')
 
 def detalhes(request, codigo):
-    '''Tela de detalhe dos Museus'''
+    '''Tela de detalhe das Bibliotecas'''
 
     from biblioteca.models import Biblioteca
     from sniic.models import Tipologia
