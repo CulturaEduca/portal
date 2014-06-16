@@ -198,6 +198,7 @@ INSTALLED_APPS = (
     'ponto_cultura',
     'ponto',
     'sniic',
+    'referencia',
 )
 
 # A sample logging configuration. The only tangible logging
