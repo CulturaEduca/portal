@@ -4,24 +4,10 @@ from __future__ import unicode_literals
 from django.contrib.gis import admin
 from django.contrib.gis.db import models
 from ibge.models import Municipio
-from territorio.models import TipoGeo 
+from territorio.models import TipoGeo
+from referencia.models import TipoEsfera
+from sniic.models import Nivel3
 
-
-class EsferaAdministrativa(models.Model):
-    '''Esfera Administrativa'''
-
-    nome = models.CharField('Nome Esfera', max_length=100)
-
-    def __unicode__(self):
-        return self.nome
-
-class TipoEsfera(models.Model):
-    '''Tipo Esfera Administrativa'''
-
-    nome = models.CharField('Tipo Esfera', max_length=100)
-
-    def __unicode__(self):
-        return self.nome
 
 class DiaFuncionamento(models.Model):
     '''Dias de funcionamento'''
@@ -86,7 +72,6 @@ class Biblioteca(models.Model):
     email2 = models.EmailField('Email 2', null=True, blank=True)
     email3 = models.EmailField('Email 3', null=True, blank=True)
 
-    esfera_administrativa = models.ForeignKey(EsferaAdministrativa, null=True, blank=True)
     tipo_esfera = models.ForeignKey(TipoEsfera, null=True, blank=True)
     mantenedor = models.CharField('Mantenedor', max_length=200, null=True, blank=True)
     cnpj_mantenedor = models.CharField('CNPJ Mantenedor', max_length=20, null=True, blank=True)
@@ -94,6 +79,8 @@ class Biblioteca(models.Model):
     sniic_n1 = models.CharField('SNIIC N1', max_length=10, null=True, blank=True)
     sniic_n2 = models.CharField('SNIIC N2', max_length=10, null=True, blank=True)
     sniic_n3 = models.CharField('SNIIC N3', max_length=10, null=True, blank=True)
+
+    tipologia_sniic = models.ForeignKey(Nivel3, null=True, blank=True)
 
     site = models.CharField('Site', max_length=200, null=True, blank=True)
 
@@ -114,8 +101,6 @@ class Biblioteca(models.Model):
 
 
 #admin.site.register(Biblioteca)
-admin.site.register(TipoEsfera)
-admin.site.register(EsferaAdministrativa)
 admin.site.register(DiaFuncionamento)
 admin.site.register(PeriodoFuncionamento)
 admin.site.register(Biblioteca)
