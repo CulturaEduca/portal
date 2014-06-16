@@ -4,24 +4,9 @@ from __future__ import unicode_literals
 from django.contrib.gis import admin
 from django.contrib.gis.db import models
 from ibge.models import Municipio
-from territorio.models import TipoGeo 
-
-
-class EsferaAdministrativa(models.Model):
-    '''Esfera Administrativa'''
-
-    nome = models.CharField('Nome Esfera', max_length=100)
-
-    def __unicode__(self):
-        return self.nome
-
-class TipoEsfera(models.Model):
-    '''Tipo Esfera Administrativa'''
-
-    nome = models.CharField('Tipo Esfera', max_length=200)
-
-    def __unicode__(self):
-        return self.nome
+from territorio.models import TipoGeo
+from referencia.models import TipoEsfera
+from sniic.models import Nivel3
 
 
 class Museu(models.Model):
@@ -34,12 +19,15 @@ class Museu(models.Model):
     '''
 
     id = models.IntegerField(primary_key=True)
+    codigo_equipamento = models.CharField('Codigo do Equipamento', max_length=9, null=True, blank=True)
+    nome = models.CharField('Nome da Biblioteca', max_length=300, null=True, blank=True)
+    cnpj = models.CharField('CNPJ', max_length=200, null=True, blank=True)
+
     longitude = models.FloatField('Longitude', null = True, blank = True)
     latitude = models.FloatField('Latitude', null = True, blank = True)
     tipogeo = models.ForeignKey(TipoGeo)
     ibge = models.ForeignKey(Municipio, null=True, blank=True, db_column='ibge')
-    # ibge = models.IntegerField('IBGE', null=True, blank=True)
-    nome = models.CharField('Nome da Biblioteca', max_length=300, null=True, blank=True)
+
     endereco_original = models.CharField('Endereco Original', max_length=300, null=True, blank=True)
     endereco_correspondencia = models.CharField('Endereco Original', max_length=300, null=True, blank=True)
     numero_original = models.CharField('Numero Original', max_length=300, null=True, blank=True)
@@ -53,21 +41,27 @@ class Museu(models.Model):
     complemento_logradouro = models.CharField('Complemento', max_length=200, null=True, blank=True)
     bairro = models.CharField('Bairro', max_length=300, null=True, blank=True)
     cep = models.CharField('CEP', max_length=10, null=True, blank=True)
+
     nome_responsavel = models.CharField('Nome Responsavel', max_length=100, null=True, blank=True)
     ddd_telefone1 = models.CharField('DDD Telefone', max_length=3, null=True, blank=True)
     telefone1 = models.CharField('Telefone1', max_length=10, null=True, blank=True)
     telefone2 = models.CharField('Telefone2', max_length=10, null=True, blank=True)
     telefone3 = models.CharField('Telefone3', max_length=10, null=True, blank=True)
     site = models.CharField('Site', max_length=300, null=True, blank=True)
-    esfera_administrativa = models.ForeignKey(EsferaAdministrativa, null=True, blank=True)
+
     tipo_esfera = models.ForeignKey(TipoEsfera, null=True, blank=True)
-    cnpj = models.CharField('CNPJ', max_length=200, null=True, blank=True)
+
     sniic_n1 = models.CharField('SNIIC N1', max_length=10, null=True, blank=True)
     sniic_n2 = models.CharField('SNIIC N2', max_length=10, null=True, blank=True)
     sniic_n3 = models.CharField('SNIIC N3', max_length=10, null=True, blank=True)
+
+    tipologia_sniic = models.ForeignKey(Nivel3, null=True, blank=True)
+
     local = models.CharField('Local', max_length=300, null=True, blank=True)
 
     # Especifico dessa base
+    codigo_museu = models.CharField('Codigo do Museu', max_length=20, null=True, blank=True)
+
     ano_criacao = models.IntegerField('Ano de Criacao', null=True, blank=True)
     ano_abertura = models.IntegerField('Ano de Abertura', null=True, blank=True)
     orcamento_proprio = models.BooleanField('Orcamento Proprio?')
